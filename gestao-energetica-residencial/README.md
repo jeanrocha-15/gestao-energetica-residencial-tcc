@@ -1,11 +1,9 @@
 # Gestão Energética Residencial
 
-Dashboard privado do TCC, com dados demonstrativos e cadastro manual persistente de consumo diário em kWh.
+Versão estática com medições manuais e persistência no navegador. Consulte o [guia completo](../README.md) para executar, publicar no GitHub Pages e exportar backups.
 
-As medições são vinculadas ao usuário autenticado e armazenadas em D1. O formulário permite cadastrar, editar e excluir registros. O dashboard separa os registros manuais da demonstração e calcula médias somente sobre dias com medições.
+Nesta pasta: `npm run build`, `npm test` e `npm run dev`. Nenhuma dependência é necessária para esses comandos com Node.js 22+.
 
-Execução somente local: `pnpm dev`, em http://127.0.0.1:5173. O comando aplica as migrações no D1 local e inicia o servidor. Crie uma conta local em `/login`. Consulte [LEIA-ME-VSCODE.md](LEIA-ME-VSCODE.md).
+Edite `app/dashboard.html` e os módulos de `public/`. O build gera `docs/` na raiz do repositório. Acesse http://127.0.0.1:5175/gestao-energetica-residencial-tcc/.
 
-Tarifas configuráveis em `/tarifas`, com TE, TUSD, tributos, outros componentes e bandeira por vigência. Não há tarifa padrão. Custos são estimativas pelo modelo explícito de tributos por fora. Um circuito compartilhado pode ser cadastrado sem atribuir seu consumo a um cômodo específico.
-
-A integração Tuya / Smart Life permite coletar diferenças de contadores acumulados automaticamente. Consulte [INTEGRACAO-TUYA.md](INTEGRACAO-TUYA.md) para configurar credenciais, migração obrigatória e agendamento. Os totais automáticos representam intervalos monitorados e podem ser parciais.
+Medições e tarifas ficam somente no navegador. Use Configurações para exportar/importar backups. Os dados antigos em `.wrangler` são preservados, mas não são usados nem publicados pela versão estática.

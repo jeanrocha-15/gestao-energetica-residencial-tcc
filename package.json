@@ -1,0 +1,10 @@
+{
+  "name": "gestao-energetica-residencial-tcc",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node gestao-energetica-residencial/scripts/serve-static.mjs",
+    "build": "node gestao-energetica-residencial/scripts/build-static.mjs",
+    "test": "node --experimental-vm-modules gestao-energetica-residencial/scripts/test-static.mjs"
+  }
+}

@@ -1,3 +1,4 @@
+import { storageRequest, exportBackup, importBackup } from './storage.js';
 import { flagPerKwh } from './energy-cost.js';
 export let tariffs = [];
 let refreshDashboard;
@@ -19,14 +20,9 @@ function helpButton(key) {
 }
 /** Escapa conteúdo cadastrado antes de inseri-lo no HTML das tabelas. */
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
-/** Envia configurações ao banco por API autenticada, apresentando erros de validação. */
-async function request(method = 'GET', body) {
-  const response = await fetch('/api/tariffs', { method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error);
-  return data;
-}
-/** Recarrega as vigências persistidas e recalcula o painel sem localStorage. */
+/** Persiste as tarifas localmente, validando valores e sobreposição de vigências. */
+async function request(method = 'GET', body) { return storageRequest('tariffs', method, body); }
+/** Recarrega as vigências salvas neste navegador e recalcula o painel. */
 export async function loadTariffs() {
   try {
     tariffs = (await request()).tariffs;
@@ -66,63 +62,6 @@ function setupHelp() {
   }
 }
 
-const deviceFields = [['name','Nome'],['manufacturer','Fabricante'],['model','Modelo'],['room','Cômodo ou abrangência'],['circuit','Circuito'],['identifier','Identificador do dispositivo'],['dataSource','Origem dos dados']];
-let registeredDevices = [];
-/** Consulta o cadastro genérico; nenhuma chamada deste cadastro conecta equipamentos. */
-async function deviceRequest(method = 'GET', body) {
-  const response = await fetch('/api/devices', { method, headers: { 'Content-Type':'application/json' }, body:body ? JSON.stringify(body) : undefined, cache:'no-store' });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error);
-  return data;
-}
-/** Carrega os dispositivos do usuário e exibe o estado real de ausência de integração. */
-async function loadDevices() {
-  const status = document.getElementById('devices-status');
-  status.textContent = 'Carregando dispositivos…';
-  try {
-    registeredDevices = (await deviceRequest()).devices;
-    document.getElementById('devices-list').innerHTML = registeredDevices.map(device => `<article class="device-card"><h3>${escape(device.name)}</h3><dl>${deviceFields.slice(1).map(([key,label])=>`<div><dt>${label}</dt><dd>${escape(device[key])}</dd></div>`).join('')}<div><dt>Status da integração</dt><dd>${escape(device.integrationStatus)}</dd></div></dl><button type="button" class="link-btn" data-device-edit="${device.id}">Editar</button><button type="button" class="link-btn danger" data-device-delete="${device.id}">Excluir</button></article>`).join('');
-    status.textContent = registeredDevices.length ? `${registeredDevices.length} dispositivo(s) cadastrado(s). Cadastro não inicia coleta automática.` : 'Nenhum dispositivo cadastrado. Integração não configurada.';
-  } catch (error) { status.textContent = error.message; }
-}
-/** Preenche o formulário de metadados sem aceitar credenciais ou status de conexão inventados. */
-function editDevice(id) {
-  const form = document.getElementById('device-form'), device = registeredDevices.find(item => item.id === id);
-  form.reset(); form.dataset.id = device?.id || crypto.randomUUID(); form.dataset.edit = String(Boolean(device));
-  for (const [key] of deviceFields) form.elements.namedItem(key).value = device?.[key] || '';
-  document.getElementById('device-form-title').textContent = device ? 'Editar dispositivo' : 'Cadastrar dispositivo';
-  document.getElementById('device-error').textContent = '';
-  form.hidden = false;
-  form.elements.namedItem('name').focus();
-}
-/** Monta o cadastro genérico dentro da área existente de dispositivos inteligentes. */
-function mountDevices() {
-  document.getElementById('device-manager').innerHTML = `<button type="button" class="primary-btn" id="new-device">+ Cadastrar dispositivo</button><p id="devices-status" role="status"></p><form id="device-form" hidden><h3 id="device-form-title">Cadastrar dispositivo</h3><div class="form-grid">${deviceFields.map(([key,label])=>`<label class="field">${label}<input name="${key}" maxlength="160" required${key==='room'?' placeholder="Ex.: sala, residência ou equipamento"':key==='dataSource'?' placeholder="Ex.: leitura manual, arquivo ou API pretendida"':''}></label>`).join('')}<label class="field wide">Status da integração<input value="Integração não configurada" readonly></label></div><p>Informe apenas o código de identificação, nunca senha, token ou chave de acesso. A origem dos dados é descritiva e não configura uma conexão.</p><p id="device-error" class="status error" role="alert"></p><button type="submit" class="primary-btn" id="save-device">Salvar dispositivo</button> <button type="button" class="secondary-btn" id="cancel-device">Cancelar</button></form><div id="devices-list"></div>`;
-  document.getElementById('new-device').addEventListener('click', () => editDevice());
-  document.getElementById('cancel-device').addEventListener('click', () => { document.getElementById('device-form').hidden = true; });
-  document.getElementById('device-form').addEventListener('submit', async event => {
-    event.preventDefault(); const form = event.currentTarget, save = document.getElementById('save-device');
-    if (save.disabled) return;
-    save.disabled = true;
-    try {
-      const body = { id:form.dataset.id };
-      for (const [key] of deviceFields) body[key] = form.elements.namedItem(key).value;
-      await deviceRequest(form.dataset.edit === 'true' ? 'PUT' : 'POST', body);
-      form.hidden = true; await loadDevices();
-    } catch (error) { document.getElementById('device-error').textContent = error.message; }
-    finally { save.disabled = false; }
-  });
-  document.getElementById('devices-list').addEventListener('click', async event => {
-    const button = event.target.closest('button'); if (!button) return;
-    if (button.dataset.deviceEdit) editDevice(button.dataset.deviceEdit);
-    if (button.dataset.deviceDelete && confirm('Excluir este cadastro de dispositivo? As medições existentes serão preservadas.')) {
-      button.disabled = true;
-      try { await deviceRequest('DELETE', { id:button.dataset.deviceDelete }); await loadDevices(); }
-      catch (error) { document.getElementById('devices-status').textContent = error.message; button.disabled = false; }
-    }
-  });
-  for (const id of ['connect-tuya','settings-tuya']) document.getElementById(id).addEventListener('click', loadDevices);
-}
 /** Preenche o formulário; copiar mantém os valores mas exige uma nova vigência. */
 function editTariff(id, copy = false) {
   const form = document.getElementById('tariff-form'), tariff = tariffs.find(t => t.id === id);
@@ -143,24 +82,24 @@ function editTariff(id, copy = false) {
 }
 /** Troca somente a área principal da rota, preservando menu, filtros e estado da aplicação. */
 function showPage() {
-  const route = location.pathname;
+  const route = location.hash.slice(1) || '/';
   const names = { '/':'Visão geral', '/medicoes':'Medições', '/historico':'Histórico', '/comparacao':'Comparação', '/tarifas':'Tarifas', '/configuracoes':'Configurações' };
   document.querySelector('h1').textContent = names[route] || 'Visão geral';
   document.title = `${names[route]} · Gestão Energética`;
   for (const item of document.querySelectorAll('[data-pages]')) item.hidden = !item.dataset.pages.split(',').includes(route);
   for (const link of document.querySelectorAll('.side nav a')) {
-    const active = link.getAttribute('href') === route;
+    const active = link.getAttribute('href') === '#' + route;
     link.classList.toggle('active', active);
     if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
   }
   window.scrollTo(0, 0);
 }
-/** Monta as rotas, o CRUD de tarifas e os controles da conta local dentro do layout existente. */
+/** Monta as rotas, o cadastro de tarifas e os controles de backup local dentro do layout existente. */
 export function mountPages(onChange) {
   refreshDashboard = onChange;
   const nav = document.querySelector('.side nav');
-  nav.innerHTML = [['/','Visão geral','◫'],['/medicoes','Medições','＋'],['/historico','Histórico','↗'],['/comparacao','Comparação','▥'],['/tarifas','Tarifas','R$'],['/configuracoes','Configurações','⚙']].map(([url,label,icon]) => `<a href="${url}" title="${label}"><b aria-hidden="true">${icon}</b><span>${label}</span></a>`).join('');
-  document.querySelector('.brand').setAttribute('href', '/');
+  nav.innerHTML = [['/','Visão geral','◫'],['/medicoes','Medições','＋'],['/historico','Histórico','↗'],['/comparacao','Comparação','▥'],['/tarifas','Tarifas','R$'],['/configuracoes','Configurações','⚙']].map(([url,label,icon]) => `<a href="#${url}" title="${label}"><b aria-hidden="true">${icon}</b><span>${label}</span></a>`).join('');
+  document.querySelector('.brand').setAttribute('href', '#/');
   document.querySelector('.kpis').dataset.pages = '/';
   document.querySelector('.content-grid').dataset.pages = '/historico,/comparacao';
   document.getElementById('historico').dataset.pages = '/historico';
@@ -175,17 +114,12 @@ export function mountPages(onChange) {
   document.querySelector('.main').insertAdjacentHTML('beforeend', `
     <section class="card panel" id="cost-breakdown" data-pages="/"><h2>Composição do custo estimado</h2><p id="cost-warning" role="status"></p><div id="cost-parts"></div><p class="manual-help">Estimativa por data. Tributos por fora sobre TE + TUSD + bandeira + outros; não substitui a fatura da concessionária.</p></section>
     <section class="card panel" id="tariff-page" data-pages="/tarifas"><div class="panel-head"><h2>Configurações de tarifas</h2><button class="primary-btn" id="new-tariff">+ Cadastrar tarifa</button></div><p id="tariff-status" role="status"></p><p>Para trocar a bandeira, use <strong>Nova vigência / bandeira</strong>. A cópia não modifica o período anterior. Tarifa e bandeira compartilham as datas desta configuração.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Vigência</th><th>Bandeira</th><th>TE R$/kWh</th><th>TUSD R$/kWh</th><th>Adicional R$/kWh</th><th>Ações</th></tr></thead><tbody id="tariff-list"></tbody></table></div><p class="manual-help">Editar corrige a configuração selecionada e recalcula estimativas do período. Excluir deixa esse período sem tarifa. Cadastre uma nova vigência para reajustes. Datas não podem se sobrepor.</p></section>
-    <section class="card panel" data-pages="/configuracoes"><h2>Ambiente local</h2><p id="account-name"></p><p>Conta e dados guardados neste computador. Não há sincronização com o site hospedado.</p><p>Em Tarifas, informe os valores da sua configuração. Não há tarifa padrão.</p><h3>Modelo da estimativa</h3><p>Base = kWh × (TE + TUSD + adicional da bandeira por kWh + outros por kWh).</p><p>PIS, COFINS e ICMS = base × percentual / 100, calculados separadamente, por fora. Total = base + os três tributos.</p><p>Esse modelo simplificado não reproduz incidência por dentro, isenções, custo de disponibilidade, iluminação pública ou todas as regras da concessionária.</p><button class="secondary-btn" id="settings-tuya">Dispositivos inteligentes</button> <button class="secondary-btn" id="logout">Sair da conta local</button></section>`);
+    <section class="card panel" data-pages="/configuracoes"><h2>Dados neste navegador</h2><p>As medições e tarifas ficam salvas apenas neste navegador e dispositivo. Não há conta, login ou sincronização. Limpar os dados do site ou usar navegação privada pode apagar os registros. Os dados do antigo servidor local não são importados automaticamente.</p><p>Em Tarifas, informe os valores da sua configuração. Não há tarifa padrão.</p><h3>Modelo da estimativa</h3><p>Base = kWh × (TE + TUSD + adicional da bandeira por kWh + outros por kWh).</p><p>PIS, COFINS e ICMS = base × percentual / 100, calculados separadamente, por fora. Total = base + os três tributos.</p><p>Esse modelo simplificado não reproduz incidência por dentro, isenções, custo de disponibilidade, iluminação pública ou todas as regras da concessionária.</p><h3>Backup dos dados</h3><p>Exporte um arquivo para guardar uma cópia ou transferir seus registros. Importar substitui as medições e tarifas atuais após confirmação.</p><button class="secondary-btn" id="export-backup">Exportar backup</button> <label class="secondary-btn">Importar backup <input type="file" id="import-backup" accept="application/json,.json"></label><p id="backup-status" role="status"></p></section>`);
   document.body.insertAdjacentHTML('beforeend', `<dialog class="dialog" id="tariff-dialog"><form id="tariff-form"><h2 id="tariff-title">Cadastrar tarifa</h2><div class="form-grid"><div class="field"><span><label for="tariff-start">Início da vigência</label> ${helpButton('validity')}</span><input id="tariff-start" name="startDate" type="date" min="2000-01-01" max="2099-12-31" required></div><div class="field"><span><label for="tariff-end">Fim da vigência (inclusive)</label> ${helpButton('validity')}</span><input id="tariff-end" name="endDate" type="date" min="2000-01-01" max="2099-12-31" required></div>${numericField('te','TE (R$/kWh)',1000)}${numericField('tusd','TUSD (R$/kWh)',1000)}${numericField('pis','PIS (%)',100)}${numericField('cofins','COFINS (%)',100)}${numericField('icms','ICMS (%)',100)}<div class="field"><span><label for="tariff-flag">Bandeira</label> ${helpButton('flag')}</span><select id="tariff-flag" name="flag"><option>Verde</option><option>Amarela</option><option>Vermelha Patamar 1</option><option>Vermelha Patamar 2</option></select></div>${numericField('flagValue','Valor adicional da bandeira',10000)}<label class="field">Unidade do adicional<select name="flagUnit"><option value="BRL_KWH">R$/kWh</option><option value="BRL_100_KWH">R$/100 kWh</option></select></label><label class="field wide">Outros componentes (opcional)<textarea name="others" rows="3" placeholder="Nome;valor em R$/kWh"></textarea><small>Uma linha por componente. Separe nome e valor por ponto e vírgula. Sem valores fixos mensais.</small></label><label class="field wide"><span><input type="checkbox" name="ack" required style="width:auto"> Entendo que os tributos são estimados por fora sobre todos os componentes e que isso não substitui a fatura.</span></label></div><p id="tariff-error" class="status error" role="alert"></p><div class="dialog-actions"><button type="button" class="secondary-btn" id="cancel-tariff">Cancelar</button><button class="primary-btn" id="save-tariff">Salvar configuração</button></div></form></dialog>`);
   setupHelp();
-  mountDevices();
-  // Links reais permitem abrir cada rota diretamente; History mantém o menu montado.
-  document.querySelector('.side').addEventListener('click', event => {
-    const link = event.target.closest('a');
-    if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) return;
-    event.preventDefault(); history.pushState({}, '', link.getAttribute('href')); showPage();
-  });
-  window.addEventListener('popstate', showPage);
+
+  // Rotas com # funcionam ao recarregar e em subdiretórios do GitHub Pages.
+  window.addEventListener('hashchange', showPage);
   document.getElementById('new-tariff').addEventListener('click', () => editTariff());
   document.getElementById('cancel-tariff').addEventListener('click', () => document.getElementById('tariff-dialog').close());
   document.getElementById('tariff-list').addEventListener('click', async event => {
@@ -215,12 +149,8 @@ export function mountPages(onChange) {
     } catch (error) { document.getElementById('tariff-error').textContent = error.message; }
     finally { buttons.forEach(button => button.disabled = false); }
   });
-  document.getElementById('settings-tuya').addEventListener('click', () => document.getElementById('tuya-dialog').showModal());
-  document.getElementById('logout').addEventListener('click', async () => {
-    const response = await fetch('/api/auth/logout', { method:'POST' });
-    if (response.ok) location.assign('/login');
-  });
-  // O usuário final vê sua conta; identificadores de configuração ficam no procedimento administrativo.
-  fetch('/api/auth/me').then(response => response.json()).then(user => { document.getElementById('account-name').textContent = `Conta: ${user.email}`; }).catch(() => {});
+  // O backup é baixado pelo próprio navegador; não há envio para serviços externos.
+  document.getElementById('export-backup').addEventListener('click', exportBackup);
+  document.getElementById('import-backup').addEventListener('change', importBackup);
   showPage();
 }

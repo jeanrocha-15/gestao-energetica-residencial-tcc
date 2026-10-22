@@ -37,25 +37,24 @@
       <div class="side-bottom"><strong>Projeto acadêmico</strong>Registre as medições e acompanhe o consumo por cômodo e circuito.</div>
     </aside>
     <main class="main" id="visao-geral">
-      <header class="topline"><div><p class="eyebrow">Painel de consumo</p><h1>Visão geral da residência</h1><p>Energia por cômodo e circuito, em um só lugar.</p></div><span class="demo-badge" id="data-badge">Dados demonstrativos</span></header>
-      <div class="source-line"><div class="segmented" role="group" aria-label="Fonte dos dados"><button type="button" data-source="demo" aria-pressed="true">Demonstração</button><button type="button" data-source="manual" aria-pressed="false">Minhas medições</button></div><button type="button" class="secondary-btn" id="connect-tuya">Dispositivos inteligentes</button><button type="button" class="primary-btn" id="add-reading">+ Adicionar medição</button></div>
+      <header class="topline"><div><p class="eyebrow">Painel de consumo</p><h1>Visão geral da residência</h1><p>Energia por cômodo e circuito, em um só lugar.</p></div><span class="demo-badge" id="data-badge">Medições manuais</span></header>
+      <div class="source-line"><span>Entrada manual · dados salvos neste navegador</span><button type="button" class="primary-btn" id="add-reading">+ Adicionar medição</button></div>
       <p class="status" id="load-status" role="status">Carregando suas medições…</p>
       <div class="toolbar" aria-label="Filtros do painel"><div class="left"><span class="control-label">Período</span><div class="segmented" role="group" aria-label="Selecionar período"><button type="button" data-period="7" aria-pressed="false">7 dias</button><button type="button" data-period="30" aria-pressed="true">30 dias</button><button type="button" data-period="90" aria-pressed="false">90 dias</button></div></div><div class="right"><label class="date-control" id="date-control" hidden>Até <input type="date" id="end-date" aria-label="Data final do período"></label><span class="period-dates" id="period-dates"></span></div></div>
       <section class="kpis" aria-label="Indicadores da residência"><article class="card kpi feature"><span class="kpi-label" id="energy-label">Consumo no período</span><div class="kpi-value" id="kpi-energy">—</div><span class="kpi-detail" id="kpi-energy-detail">—</span></article><article class="card kpi"><span class="kpi-label">Custo estimado</span><div class="kpi-value" id="kpi-cost">—</div><span class="kpi-detail">Conforme vigência de cada data</span></article><article class="card kpi"><span class="kpi-label">Média diária</span><div class="kpi-value" id="kpi-average">—</div><span class="kpi-detail" id="average-detail">Energia por dia selecionado</span></article><article class="card kpi"><span class="kpi-label">Maior consumo</span><div class="kpi-value" id="kpi-top">—</div><span class="kpi-detail" id="kpi-top-detail">—</span></article></section>
       <div class="content-grid"><section class="card panel" id="historico" aria-labelledby="history-title"><div class="panel-head"><div><h2 id="history-title">Histórico de consumo</h2><p class="panel-sub" id="history-sub">Casa inteira · consumo diário</p></div><div class="panel-actions"><div class="segmented" role="group" aria-label="Unidade do histórico"><button type="button" data-metric="energy" aria-pressed="true">kWh</button><button type="button" data-metric="cost" aria-pressed="false">R$</button></div><div class="segmented" role="group" aria-label="Tipo de gráfico"><button type="button" data-chart="bars" aria-pressed="true">Barras</button><button type="button" data-chart="line" aria-pressed="false">Linha</button></div></div></div><div class="chart-summary"><strong id="history-total">—</strong><span id="history-average">—</span></div><div class="chart-wrap" id="chart-wrap"><svg id="chart" viewBox="0 0 720 255" role="img" aria-label="Histórico de consumo"></svg><div class="chart-tip" id="chart-tip"></div></div><div class="chart-legend"><i aria-hidden="true"></i><span id="chart-legend">Consumo diário demonstrativo</span></div></section>
       <section class="card panel" id="comparacao" aria-labelledby="compare-title"><div class="panel-head"><div><h2 id="compare-title">Onde a energia é usada</h2><p class="panel-sub" id="compare-sub">Participação no consumo do período</p></div><div class="panel-actions"><div class="segmented" role="group" aria-label="Agrupar comparação"><button type="button" data-group="rooms" aria-pressed="true">Cômodos</button><button type="button" data-group="circuits" aria-pressed="false">Circuitos</button></div></div></div><div class="ranking" id="ranking"></div><button type="button" class="clear-focus" id="clear-focus" hidden>Limpar seleção · ver casa inteira</button></section></div>
-      <div class="lower-grid"><section class="card panel" aria-labelledby="detail-title"><div class="panel-head"><div><h2 id="detail-title">Detalhamento</h2><p class="panel-sub" id="detail-sub">Consumo por cômodo no período selecionado</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th scope="col" id="table-first">Cômodo</th><th scope="col">Consumo</th><th scope="col">Participação</th><th scope="col">Custo estimado</th></tr></thead><tbody id="detail-body"></tbody></table></div></section><aside class="card panel note-panel" aria-labelledby="note-title"><h2 id="note-title">Sobre estes dados</h2><p id="demo-note">Os valores são <span class="note-strong">simulados</span> para demonstrar o dashboard. Os custos usam as configurações por vigência e não representam uma fatura.</p><p id="data-note">Dispositivos podem medir a residência, o quadro, um circuito, um cômodo ou um equipamento individual. A divisão demonstrativa simula essa organização; a cobertura real depende dos aparelhos e de sua instalação.</p></aside></div>
-      <section class="card panel measurements" id="medicoes" aria-labelledby="readings-title"><div class="panel-head"><div><h2 id="readings-title">Medições cadastradas</h2><p class="panel-sub" id="readings-sub">Seus registros salvos</p></div><button type="button" class="secondary-btn" id="reload-readings">Atualizar registros</button></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Data</th><th>Cômodo</th><th>Circuito</th><th>Consumo</th><th>Ações</th></tr></thead><tbody id="readings-body"></tbody></table></div><p class="entry-empty" id="readings-empty">Cadastre a primeira medição para começar.</p><p class="manual-help">Informe o consumo diário, sem repetir a mesma energia em mais de um registro. Para um circuito que atende vários cômodos, escolha “Circuito compartilhado”.</p></section>
-      <footer class="foot">Sistema Inteligente de Gestão Energética Residencial · Protótipo acadêmico · Registros manuais salvos na sua conta</footer>
+      <div class="lower-grid"><section class="card panel" aria-labelledby="detail-title"><div class="panel-head"><div><h2 id="detail-title">Detalhamento</h2><p class="panel-sub" id="detail-sub">Consumo por cômodo no período selecionado</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th scope="col" id="table-first">Cômodo</th><th scope="col">Consumo</th><th scope="col">Participação</th><th scope="col">Custo estimado</th></tr></thead><tbody id="detail-body"></tbody></table></div></section><aside class="card panel note-panel" aria-labelledby="note-title"><h2 id="note-title">Sobre estes dados</h2><p id="demo-note">Cadastre medições manuais para acompanhar o consumo.</p><p id="data-note">Informe apenas o consumo medido, evitando registros sobrepostos.</p></aside></div>
+      <section class="card panel measurements" id="medicoes" aria-labelledby="readings-title"><div class="panel-head"><div><h2 id="readings-title">Medições cadastradas</h2><p class="panel-sub" id="readings-sub">Seus registros salvos</p></div><button type="button" class="secondary-btn" id="reload-readings">Atualizar registros</button></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Data</th><th>Cômodo</th><th>Circuito</th><th>Consumo</th><th>Custo estimado</th><th>Ações</th></tr></thead><tbody id="readings-body"></tbody></table></div><p class="entry-empty" id="readings-empty">Cadastre a primeira medição para começar.</p><p class="manual-help">Informe o consumo diário, sem repetir a mesma energia em mais de um registro. Para um circuito que atende vários cômodos, escolha “Circuito compartilhado”.</p></section>
+      <footer class="foot">Sistema Inteligente de Gestão Energética Residencial · Protótipo acadêmico · Registros manuais salvos neste navegador · Exporte backups em Configurações</footer>
     </main>
   </div>
-  <dialog class="dialog devices-dialog" id="tuya-dialog" aria-labelledby="tuya-title"><h2 id="tuya-title">Dispositivos inteligentes</h2><p>Cadastre dispositivos de qualquer fabricante para organizar medições de residência, quadro, circuito, cômodo ou equipamento individual.</p><p>Cadastrar um dispositivo não estabelece conexão nem gera medições. Sem conexão real, o status é “Integração não configurada”.</p><div id="device-manager"></div><details id="tuya-integration"><summary>Tuya / Smart Life</summary></details><div class="dialog-actions"><button type="button" class="secondary-btn" id="close-tuya">Fechar</button></div></dialog>
   <dialog class="dialog" id="reading-dialog" aria-labelledby="dialog-title"><form id="reading-form"><h2 id="dialog-title">Adicionar medição</h2><p>Registre o consumo de um dia para o circuito medido.</p><div class="form-grid"><label class="field">Data da medição<input id="reading-date" type="date" required min="2000-01-01" max="2099-12-31"></label><label class="field">Consumo (kWh)<input id="reading-kwh" type="number" min="0" max="10000" step="0.001" inputmode="decimal" placeholder="Ex.: 4,250" required></label><label class="field">Cômodo<select id="reading-room" required></select></label><label class="field">Circuito<select id="reading-circuit" required></select></label><div class="field wide"><small>Se o medidor mostra energia acumulada, informe a diferença entre a leitura final e a inicial do dia. Ex.: 104,25 − 100,00 = 4,25 kWh.</small></div></div><p class="status error" id="form-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="secondary-btn" id="cancel-reading">Cancelar</button><button type="submit" class="primary-btn" id="save-reading">Salvar medição</button></div></form></dialog>
   <dialog class="dialog" id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Excluir medição?</h2><p id="delete-description"></p><p class="status error" id="delete-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="secondary-btn" id="cancel-delete">Cancelar</button><button type="button" class="primary-btn" id="confirm-delete">Excluir medição</button></div></dialog>
   <script type="module">
-    import { tariffForDate, estimateCost } from "/energy-cost.js";
-    import { tariffs, mountPages, loadTariffs } from "/local-pages.js";
-    import { mountTuya } from "/tuya-integration.js";
+    import { tariffForDate, estimateCost } from "./energy-cost.js";
+    import { tariffs, mountPages, loadTariffs } from "./local-pages.js";
+    import { storageRequest } from "./storage.js";
   (() => {
     'use strict';
     const DAY = 86400000;
@@ -73,22 +72,12 @@
       {name:'Cozinha',color:'#d59e46'},{name:'Tomadas gerais',color:'#3e8978'},
       {name:'Iluminação',color:'#9a82b9'}
     ];
-    const records = Array.from({length:90},(_,i) => {
-      const date = new Date(end.getTime() - (89-i)*DAY);
-      const weekend = [0,6].includes(date.getUTCDay());
-      const allocations = rooms.flatMap((room,ri) => Object.entries(room.loads).map(([circuit,base],ci) => {
-        const wave = 1 + 0.12*Math.sin(i*0.53+ri*1.19+ci*0.8) + 0.065*Math.cos(i*0.17+ri*0.8);
-        const weekendFactor = weekend ? (circuit==='Climatização' ? 1.12 : circuit==='Cozinha' ? 1.08 : 1.045) : 1;
-        const seasonal = 1 + 0.045*Math.sin(i/17);
-        return {room:room.id,circuit,kwh:Math.round(base*wave*weekendFactor*seasonal*1000)/1000};
-      }));
-      return {date,allocations,total:allocations.reduce((a,b)=>a+b.kwh,0)};
-    });
+    const records = []; // A versão manual não gera medições simuladas.
     const sharedRoom={id:'shared',name:'Circuito compartilhado',color:'#7e8d9b',loads:{}};
     const roomOptions=[...rooms,sharedRoom];
     let readings=[],loading=true,loadFailed=false,editingId=null,requestId=null,deletingId=null,saving=false;
     const today=()=>new Date().toLocaleDateString('en-CA');
-    const state = {period:30,metric:'energy',chart:'bars',group:'rooms',focus:null,source:'demo',endDate:today()};
+    const state = {period:30,metric:'energy',chart:'bars',group:'rooms',focus:null,source:'manual',endDate:today()};
     const $ = id => document.getElementById(id);
     const fmt = (n,d=1) => new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
     const money = n => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:2}).format(n);
@@ -212,7 +201,7 @@
     function setView(input){
       if(!input||typeof input!=='object')throw new Error('Configuração inválida');
       const next={...state};
-      if(input.source!==undefined){if(!['demo','manual'].includes(input.source))throw new Error('Fonte inválida');next.source=input.source;next.focus=null;}
+      if(input.source!==undefined){if(input.source !== 'manual')throw new Error('Fonte inválida');next.source=input.source;next.focus=null;}
       if(input.endDate!==undefined){if(!/^20\d{2}-\d{2}-\d{2}$/.test(input.endDate)||Number.isNaN(Date.parse(input.endDate+'T00:00:00Z'))||new Date(input.endDate+'T00:00:00Z').toISOString().slice(0,10)!==input.endDate)throw new Error('Data inválida');next.endDate=input.endDate;}
       if(input.period!==undefined){const p=Number(input.period);if(![7,30,90].includes(p))throw new Error('Período deve ser 7, 30 ou 90 dias');next.period=p}
       if(input.metric!==undefined){if(!['energy','cost'].includes(input.metric))throw new Error('Unidade inválida');next.metric=input.metric}
@@ -226,23 +215,15 @@
     $('ranking').addEventListener('click',e=>{const b=e.target.closest('[data-focus]');if(b)setView({focus:state.focus===b.dataset.focus?null:b.dataset.focus})});
     $('clear-focus').addEventListener('click',()=>setView({focus:null}));
     $('end-date').addEventListener('change',()=>{try{setView({endDate:$('end-date').value})}catch(error){$('load-status').textContent=error.message}});
-    // Mostra os lançamentos e identifica os registros Tuya, que não são editáveis manualmente.
+    // Mostra as medições manuais com comandos para editar e excluir.
     function renderReadings(){
       $('readings-sub').textContent=loading?'Carregando…':`${readings.length} ${readings.length===1?'registro salvo':'registros salvos'} · todos os períodos`;
       $('readings-empty').hidden=loading||readings.length>0;
       $('readings-empty').textContent=loadFailed?'Não foi possível carregar os registros. Use “Atualizar registros” para tentar novamente.':'Cadastre a primeira medição para começar.';
-      $('readings-body').innerHTML=readings.map(r=>`<tr><td>${r.date.split('-').reverse().join('/')}</td><td>${esc(roomOptions.find(x=>x.id===r.room)?.name||r.room)}</td><td>${esc(r.circuit)}</td><td>${fmt(r.kwh,3)} kWh</td><td>${tariffForDate(tariffs,r.date)?money(estimateCost(r.kwh,tariffForDate(tariffs,r.date)).total):'Sem tarifa válida'}</td><td>${r.source === 'tuya' ? 'Tuya · automático' : `<span class="table-actions"><button class="link-btn" data-edit="${esc(r.id)}" aria-label="Editar medição de ${r.date}">Editar</button><button class="link-btn danger" data-delete="${esc(r.id)}" aria-label="Excluir medição de ${r.date}">Excluir</button></span>`}</td></tr>`).join('');
+      $('readings-body').innerHTML=readings.map(r=>`<tr><td>${r.date.split('-').reverse().join('/')}</td><td>${esc(roomOptions.find(x=>x.id===r.room)?.name||r.room)}</td><td>${esc(r.circuit)}</td><td>${fmt(r.kwh,3)} kWh</td><td>${tariffForDate(tariffs,r.date)?money(estimateCost(r.kwh,tariffForDate(tariffs,r.date)).total):'Sem tarifa válida'}</td><td><span class="table-actions"><button class="link-btn" data-edit="${esc(r.id)}" aria-label="Editar medição de ${r.date}">Editar</button><button class="link-btn danger" data-delete="${esc(r.id)}" aria-label="Excluir medição de ${r.date}">Excluir</button></span></td></tr>`).join('');
     }
-    // Mantém o cadastro genérico e abre o fluxo real da Tuya no mesmo diálogo.
-    $('connect-tuya').addEventListener('click',()=>$('tuya-dialog').showModal());
-    $('close-tuya').addEventListener('click',()=>$('tuya-dialog').close());
-    mountTuya({rooms:roomOptions,circuits,onReadings:()=>loadReadings(true)});
-    // Envia as operações de cadastro manual à API e apresenta os erros ao formulário.
-    async function request(method,body){
-      const response=await fetch('/api/readings',{method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,credentials:'same-origin',cache:'no-store'});
-      let data;try{data=await response.json()}catch{throw new Error('Não foi possível acessar as medições. Atualize a página e tente novamente.');}
-      if(!response.ok)throw new Error(data.error||'Não foi possível concluir a solicitação.');return data;
-    }
+    /** Valida e persiste as medições no navegador, sem enviar dados a um servidor. */
+    async function request(method, body) { return storageRequest('readings', method, body); }
     // Carrega os registros salvos e atualiza a tabela e o estado de carregamento.
     async function loadReadings(initial=false){
       loading=true;$('reload-readings').disabled=true;$('load-status').className='status';$('load-status').textContent='Carregando suas medições…';renderReadings();
@@ -273,10 +254,9 @@
     // Recalcula também a lista quando uma configuração de tarifa muda.
     mountPages(()=>{render();renderReadings();});
     render();loadReadings(true);loadTariffs();
-    if(document.modelContext?.registerTool){
-      const controller=new AbortController();
-      try{Promise.resolve(document.modelContext.registerTool({name:'configure_energy_dashboard_view',title:'Configurar painel de energia',description:'Ajusta os filtros e a visualização do dashboard e atualiza os resultados exibidos.',inputSchema:{type:'object',properties:{source:{type:'string',enum:['demo','manual']},endDate:{type:'string',description:'Data final do período manual, no formato AAAA-MM-DD.'},period:{type:'integer',enum:[7,30,90]},metric:{type:'string',enum:['energy','cost']},chart:{type:'string',enum:['bars','line']},group:{type:'string',enum:['rooms','circuits']},focus:{type:['string','null'],description:'ID do cômodo ou nome do circuito no agrupamento escolhido; null limpa a seleção.'}},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:async input=>setView(input)},{signal:controller.signal})).catch(()=>{})}catch(_){}
-    }
+    // Importações e alterações em outra aba recarregam os dados persistidos.
+    window.addEventListener('energy-data-changed', () => { loadReadings(true); loadTariffs(); });
+
   })();
   </script>
 </body>

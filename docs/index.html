@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b2c">
+  <meta name="description" content="Gestão energética residencial com cadastro manual de medições por cômodo e circuito.">
+  <title>Gestão Energética Residencial · Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23101b2c'/%3E%3Cpath d='M12 34 32 17l20 17v17H12Z' fill='none' stroke='%23c9f27a' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='m36 26-10 14h8l-5 12 12-17h-9Z' fill='%23c9f27a'/%3E%3C/svg%3E">
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18263a;background:#f3f6f8;font-synthesis:none}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-width:320px}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #0c8e84;outline-offset:3px}a{color:inherit;text-decoration:none}
+    .shell{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}.side{background:#101b2c;color:#dce5ee;padding:29px 17px;display:flex;flex-direction:column;gap:38px}.brand{display:flex;align-items:center;gap:12px;padding:0 12px;color:#fff;font-weight:750;font-size:1.05rem;line-height:1.15;letter-spacing:-.025em}.brand-mark{width:37px;height:37px;display:grid;place-items:center;background:#c9f27a;color:#14251c;border-radius:11px;flex:none}.brand small{display:block;color:#a7b7c5;font-size:.76rem;font-weight:500;letter-spacing:0;margin-top:3px}.side-label{color:#8495aa;font-size:.72rem;font-weight:750;letter-spacing:.11em;text-transform:uppercase;margin:0 12px 12px}.side nav{display:grid;gap:6px}.side nav a{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:10px;color:#aab9c8;font-size:.91rem;font-weight:600}.side nav a:hover,.side nav a:focus-visible{background:#213047;color:#fff}.side nav a.active{background:#25364c;color:#d7fa94}.side nav svg{width:19px;height:19px;flex:none;stroke:currentColor}.side-bottom{margin-top:auto;padding:16px 12px 0;border-top:1px solid #2a394d;color:#a5b7c8;font-size:.82rem;line-height:1.55}.side-bottom strong{display:block;color:#e8f0f8;font-weight:650;margin-bottom:3px}
+    .main{min-width:0;padding:31px clamp(20px,3.3vw,52px) 42px;max-width:1800px;width:100%;margin:auto}.topline{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:24px}.eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:#50716a;margin:0 0 7px}.topline h1{font-size:clamp(1.55rem,2.2vw,2.15rem);letter-spacing:-.045em;margin:0;line-height:1.15;color:#142238}.topline p{margin:7px 0 0;color:#65778b;font-size:.9rem}.demo-badge{background:#e7f2dc;border:1px solid #d1e7bd;color:#43652d;border-radius:999px;padding:8px 12px;font-size:.78rem;font-weight:750;white-space:nowrap}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:17px}.toolbar .left,.toolbar .right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.control-label{font-size:.84rem;font-weight:700;color:#657489;margin-right:3px}.segmented{display:inline-flex;gap:3px;background:#e9eef2;border:1px solid #dfe7ec;padding:4px;border-radius:11px}.segmented button{border:0;background:transparent;color:#647589;border-radius:8px;min-height:34px;padding:7px 12px;font-size:.84rem;font-weight:650}.segmented button[aria-pressed="true"]{color:#14283a;background:#fff;box-shadow:0 1px 4px #1734501a}.segmented button:hover:not([aria-pressed="true"]){color:#243b53;background:#dfe7eb}.period-dates{font-size:.82rem;color:#697d8d;white-space:nowrap}
+    .kpis{display:grid;grid-template-columns:1.18fr repeat(3,1fr);gap:14px;margin-bottom:16px}.card{border:1px solid #e1e8ed;background:white;border-radius:17px;box-shadow:0 2px 10px #16314d08}.kpi{padding:20px 21px;min-height:139px;display:flex;flex-direction:column;justify-content:space-between}.kpi.feature{background:#172b40;color:#fff;border-color:#172b40;position:relative;overflow:hidden}.kpi.feature:after{content:"";position:absolute;width:140px;height:140px;right:-57px;top:-63px;border:23px solid #aee16d19;border-radius:50%;pointer-events:none}.kpi-label{font-size:.84rem;font-weight:650;color:#64788a}.feature .kpi-label{color:#b5c6d5}.kpi-value{font-size:clamp(1.6rem,2.45vw,2.25rem);font-weight:770;line-height:1.05;letter-spacing:-.055em;color:#16273b;white-space:nowrap}.feature .kpi-value{color:#d3fb94}.kpi-value#kpi-top{font-size:clamp(1.25rem,1.7vw,1.7rem);white-space:normal}.kpi-value small{font-size:.48em;font-weight:700;letter-spacing:-.02em;color:#79899a}.feature .kpi-value#kpi-top{font-size:clamp(1.25rem,1.7vw,1.7rem);white-space:normal}.kpi-value small{color:#b9d0bd}.kpi-detail{color:#718395;font-size:.76rem;line-height:1.3}.feature .kpi-detail{color:#b5c6d5}
+    .content-grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(320px,1fr);gap:16px}.panel{padding:22px 23px}.panel-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:17px}.panel h2{font-size:1.07rem;letter-spacing:-.025em;margin:0;color:#192a3e}.panel-sub{color:#778a9c;font-size:.81rem;margin:5px 0 0}.panel-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.panel-actions .segmented button{padding:6px 9px;min-height:31px;font-size:.78rem}.chart-summary{display:flex;gap:11px;align-items:baseline;margin-bottom:4px}.chart-summary strong{font-size:1.55rem;letter-spacing:-.045em;color:#192c40}.chart-summary span{color:#748697;font-size:.79rem}.chart-wrap{height:255px;width:100%;position:relative}.chart-wrap svg{width:100%;height:100%;overflow:visible}.chart-grid{stroke:#e8eef1;stroke-width:1}.chart-label{fill:#8191a0;font:12px Inter,system-ui,sans-serif}.chart-bar{fill:#6d9d63;transition:fill .15s}.chart-bar:hover{fill:#356e61}.chart-line{fill:none;stroke:#3c8b77;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.chart-point{fill:#fff;stroke:#3c8b77;stroke-width:2}.chart-area{fill:#b9dfbc;opacity:.28}.chart-tip{position:absolute;pointer-events:none;background:#13263a;color:#fff;padding:8px 10px;border-radius:8px;font-size:.75rem;line-height:1.4;box-shadow:0 6px 18px #10233b30;z-index:2;transform:translate(-50%,-110%);white-space:nowrap;display:none}.chart-legend{display:flex;gap:10px;align-items:center;color:#667a8e;font-size:.78rem;margin-top:2px}.chart-legend i{display:inline-block;width:10px;height:10px;background:#659875;border-radius:3px}.ranking{display:grid;gap:5px}.rank-row{appearance:none;background:none;border:1px solid transparent;width:100%;padding:8px 7px;text-align:left;border-radius:9px;color:inherit}.rank-row:hover{background:#f3f8f5}.rank-row.selected{border-color:#98cda9;background:#f0f8ef}.rank-top{display:flex;justify-content:space-between;gap:7px;align-items:baseline;margin-bottom:7px;font-size:.82rem;font-weight:670}.rank-top .name{display:flex;gap:9px;align-items:center;min-width:0}.rank-top .name span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank-top .value{white-space:nowrap;color:#253c4b}.swatch{width:9px;height:9px;border-radius:3px;display:inline-block;flex:none}.rank-track{height:7px;background:#edf1f2;border-radius:8px;overflow:hidden}.rank-fill{height:100%;border-radius:8px;min-width:2px}.rank-foot{display:flex;justify-content:space-between;color:#8191a0;font-size:.72rem;margin-top:5px}.clear-focus{border:0;background:transparent;color:#28705c;font-weight:700;font-size:.77rem;padding:7px 0;white-space:nowrap}.clear-focus:hover{text-decoration:underline}
+    .lower-grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(320px,1fr);gap:16px;margin-top:16px}.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:collapse;font-size:.83rem}.data-table th{text-align:left;color:#8190a0;font-size:.73rem;font-weight:750;padding:0 9px 11px;border-bottom:1px solid #e8eef1;white-space:nowrap}.data-table th:nth-child(n+2),.data-table td:nth-child(n+2){text-align:right}.data-table td{padding:10px 9px;border-bottom:1px solid #eff3f4;color:#43566a;white-space:nowrap}.data-table tr:last-child td{border-bottom:0}.data-table td:first-child{font-weight:650;color:#263b50}.note-panel{background:#eaf1ec;border:1px solid #d6e4dc}.note-panel h2{color:#264436}.note-panel p{color:#516a5c;font-size:.85rem;line-height:1.57;margin:10px 0 0}.note-panel .note-strong{font-weight:700;color:#2c503d}.foot{margin-top:16px;color:#8a9baa;font-size:.73rem;line-height:1.5}
+    @media(max-width:1150px){.shell{grid-template-columns:76px minmax(0,1fr)}.side{padding:22px 12px;align-items:center}.brand{padding:0}.brand .brand-text,.side-label,.side nav a span,.side-bottom{display:none}.side nav a{justify-content:center;padding:13px}.side nav{width:100%}.side nav svg{width:21px;height:21px}.kpis{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:850px){.content-grid,.lower-grid{grid-template-columns:1fr}.main{padding:24px 23px 36px}.chart-wrap{height:245px}}
+    @media(max-width:600px){.shell{display:block}.side{height:64px;padding:10px 18px;flex-direction:row;align-items:center;justify-content:space-between;gap:10px}.brand .brand-text{display:block;font-size:.91rem}.brand small{display:none}.brand-mark{width:35px;height:35px}.side nav{display:flex;width:auto;gap:4px}.side nav a{padding:9px}.side nav svg{width:19px;height:19px}.main{padding:22px 15px 35px}.topline{margin-bottom:19px}.topline h1{font-size:1.6rem}.topline p{font-size:.83rem}.demo-badge{font-size:.69rem;padding:7px 8px}.toolbar{align-items:flex-start}.toolbar .left{width:100%}.toolbar .right{justify-content:space-between;width:100%}.period-dates{font-size:.76rem}.kpis{gap:9px}.kpi{min-height:125px;padding:15px}.kpi-value{font-size:1.65rem}.kpi-label{font-size:.75rem}.kpi-detail{font-size:.68rem}.panel{padding:18px 15px}.panel-head{flex-wrap:wrap;margin-bottom:15px}.panel-actions{justify-content:flex-start}.chart-wrap{height:225px}.chart-label{font-size:11px}}
+    @media(max-width:380px){.brand .brand-text{display:none}.kpi-value{font-size:1.45rem}.segmented button{padding:6px 9px}}
+
+    .primary-btn,.secondary-btn{border:0;border-radius:9px;padding:10px 15px;font-size:.85rem;font-weight:700;min-height:40px}.primary-btn{background:#234d3d;color:#fff}.primary-btn:hover{background:#173d2e}.secondary-btn{background:#eaf0f3;color:#304658}.primary-btn:disabled,.secondary-btn:disabled{opacity:.55;cursor:wait}.date-control{font-size:.8rem;color:#63778a;display:flex;align-items:center;gap:6px}.date-control input{border:1px solid #d6e0e5;background:#fff;border-radius:8px;padding:8px;font:inherit;color:#20364b}.source-line{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:17px}.status{font-size:.84rem;margin:0;color:#516a5c;line-height:1.5}.status.error{color:#ac3030}.measurements{margin-top:16px}.entry-empty{text-align:center;color:#6c7e8c;padding:25px 12px;font-size:.9rem;line-height:1.6}.table-actions{display:flex;justify-content:flex-end;gap:7px}.link-btn{border:0;background:transparent;color:#2a715c;font-weight:650;font-size:.8rem;padding:4px}.link-btn.danger{color:#a34242}.manual-help{color:#65798c;font-size:.82rem;line-height:1.5;margin:12px 0 0}.dialog{border:1px solid #d9e3e8;border-radius:18px;padding:25px;max-width:530px;width:calc(100% - 28px);max-height:90vh;overflow:auto;color:#203348;box-shadow:0 18px 90px #05142750}.dialog::backdrop{background:#08142299}.dialog h2{margin:0 0 9px;font-size:1.3rem;letter-spacing:-.035em}.dialog p{font-size:.86rem;color:#64778b;line-height:1.5}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:21px 0}.field{display:flex;flex-direction:column;gap:7px;font-size:.85rem;font-weight:650}.field input,.field select{font:inherit;font-weight:400;width:100%;min-width:0;padding:11px;border:1px solid #cbd8df;border-radius:8px;background:#fff;color:#20354a}.field.wide{grid-column:1/-1}.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.field small{font-size:.76rem;font-weight:400;line-height:1.5;color:#718494}.dialog :focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #409c84;outline-offset:2px}.source-line .segmented button{min-height:36px} [hidden]{display:none!important}
+    @media(max-width:600px){.source-line{align-items:stretch}.source-line .primary-btn{flex-grow:1}.form-grid{grid-template-columns:1fr}.field.wide{grid-column:auto}.dialog{padding:20px}.measurements .panel-head{align-items:center}.data-table{font-size:.78rem}}
+  .side{position:sticky;top:0;height:100vh;overflow:auto}.main{margin:0 auto}.content-grid,.lower-grid{grid-template-columns:1fr}.side nav a b{width:24px;text-align:center}.cost-item{display:flex;justify-content:space-between;padding:9px;border-bottom:1px solid #edf1f2}.field textarea{font:inherit;padding:10px;border:1px solid #cbd8df;border-radius:8px}.main>section{margin-top:16px}
+    @media(max-width:1150px) and (min-width:601px){.side nav a{padding:12px 4px}}
+    @media(max-width:600px){.side{position:sticky;z-index:10;height:auto;display:block;padding:8px 12px}.side .brand{display:none}.side>div{width:100%}.side nav{display:flex;overflow-x:auto;gap:5px}.side nav a{display:grid;gap:2px;justify-items:center;flex:0 0 auto;padding:7px;font-size:.7rem}.side nav a span{display:block}.side nav a b{font-size:1rem}.side-bottom{display:none}}
+  .help-button{border:1px solid #a3b7c5;border-radius:50%;background:#edf4f3;color:#254e43;width:24px;height:24px;padding:0;font-weight:750;vertical-align:middle}.tariff-help{display:inline-block}.help-text{display:block;white-space:normal;font-size:.8rem;font-weight:400;line-height:1.5;color:#294a40;background:#edf5ee;border:1px solid #c5d8ce;border-radius:8px;padding:10px;margin:7px 0}.devices-dialog{max-width:760px}.device-card{border:1px solid #dbe5eb;border-radius:10px;padding:14px;margin-top:14px;overflow-wrap:anywhere}.device-card h3{margin:0 0 10px}.device-card dl{margin:0}.device-card dl div{display:grid;grid-template-columns:minmax(100px,1fr) 2fr;gap:10px;margin:7px 0}.device-card dt{font-weight:650}.device-card dd{margin:0}#tuya-integration{margin-top:20px}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="side" aria-label="Navegação">
+      <a class="brand" href="#visao-geral" aria-label="Gestão Energética, visão geral"><span class="brand-mark" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 28 28" fill="none"><path d="M3 13.5 14 4l11 9.5V24H3V13.5Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="m16 9-6 8h5l-2 6 7-10h-5l1-4Z" fill="currentColor"/></svg></span><span class="brand-text">Gestão Energética<small>Residencial · TCC</small></span></a>
+      <div><p class="side-label">Painel</p><nav><a href="#visao-geral" class="active" aria-label="Visão geral"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg><span>Visão geral</span></a><a href="#historico" aria-label="Histórico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 18V5m0 13h18M6 14l4-4 4 3 5-7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Histórico</span></a><a href="#comparacao" aria-label="Comparação"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 20V8m5 12V4m5 16v-9m5 9V6" stroke-linecap="round" stroke-width="3"/></svg><span>Comparação</span></a></nav></div>
+      <div class="side-bottom"><strong>Projeto acadêmico</strong>Registre as medições e acompanhe o consumo por cômodo e circuito.</div>
+    </aside>
+    <main class="main" id="visao-geral">
+      <header class="topline"><div><p class="eyebrow">Painel de consumo</p><h1>Visão geral da residência</h1><p>Energia por cômodo e circuito, em um só lugar.</p></div><span class="demo-badge" id="data-badge">Medições manuais</span></header>
+      <div class="source-line"><span>Entrada manual · dados salvos neste navegador</span><button type="button" class="primary-btn" id="add-reading">+ Adicionar medição</button></div>
+      <p class="status" id="load-status" role="status">Carregando suas medições…</p>
+      <div class="toolbar" aria-label="Filtros do painel"><div class="left"><span class="control-label">Período</span><div class="segmented" role="group" aria-label="Selecionar período"><button type="button" data-period="7" aria-pressed="false">7 dias</button><button type="button" data-period="30" aria-pressed="true">30 dias</button><button type="button" data-period="90" aria-pressed="false">90 dias</button></div></div><div class="right"><label class="date-control" id="date-control" hidden>Até <input type="date" id="end-date" aria-label="Data final do período"></label><span class="period-dates" id="period-dates"></span></div></div>
+      <section class="kpis" aria-label="Indicadores da residência"><article class="card kpi feature"><span class="kpi-label" id="energy-label">Consumo no período</span><div class="kpi-value" id="kpi-energy">—</div><span class="kpi-detail" id="kpi-energy-detail">—</span></article><article class="card kpi"><span class="kpi-label">Custo estimado</span><div class="kpi-value" id="kpi-cost">—</div><span class="kpi-detail">Conforme vigência de cada data</span></article><article class="card kpi"><span class="kpi-label">Média diária</span><div class="kpi-value" id="kpi-average">—</div><span class="kpi-detail" id="average-detail">Energia por dia selecionado</span></article><article class="card kpi"><span class="kpi-label">Maior consumo</span><div class="kpi-value" id="kpi-top">—</div><span class="kpi-detail" id="kpi-top-detail">—</span></article></section>
+      <div class="content-grid"><section class="card panel" id="historico" aria-labelledby="history-title"><div class="panel-head"><div><h2 id="history-title">Histórico de consumo</h2><p class="panel-sub" id="history-sub">Casa inteira · consumo diário</p></div><div class="panel-actions"><div class="segmented" role="group" aria-label="Unidade do histórico"><button type="button" data-metric="energy" aria-pressed="true">kWh</button><button type="button" data-metric="cost" aria-pressed="false">R$</button></div><div class="segmented" role="group" aria-label="Tipo de gráfico"><button type="button" data-chart="bars" aria-pressed="true">Barras</button><button type="button" data-chart="line" aria-pressed="false">Linha</button></div></div></div><div class="chart-summary"><strong id="history-total">—</strong><span id="history-average">—</span></div><div class="chart-wrap" id="chart-wrap"><svg id="chart" viewBox="0 0 720 255" role="img" aria-label="Histórico de consumo"></svg><div class="chart-tip" id="chart-tip"></div></div><div class="chart-legend"><i aria-hidden="true"></i><span id="chart-legend">Consumo diário demonstrativo</span></div></section>
+      <section class="card panel" id="comparacao" aria-labelledby="compare-title"><div class="panel-head"><div><h2 id="compare-title">Onde a energia é usada</h2><p class="panel-sub" id="compare-sub">Participação no consumo do período</p></div><div class="panel-actions"><div class="segmented" role="group" aria-label="Agrupar comparação"><button type="button" data-group="rooms" aria-pressed="true">Cômodos</button><button type="button" data-group="circuits" aria-pressed="false">Circuitos</button></div></div></div><div class="ranking" id="ranking"></div><button type="button" class="clear-focus" id="clear-focus" hidden>Limpar seleção · ver casa inteira</button></section></div>
+      <div class="lower-grid"><section class="card panel" aria-labelledby="detail-title"><div class="panel-head"><div><h2 id="detail-title">Detalhamento</h2><p class="panel-sub" id="detail-sub">Consumo por cômodo no período selecionado</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th scope="col" id="table-first">Cômodo</th><th scope="col">Consumo</th><th scope="col">Participação</th><th scope="col">Custo estimado</th></tr></thead><tbody id="detail-body"></tbody></table></div></section><aside class="card panel note-panel" aria-labelledby="note-title"><h2 id="note-title">Sobre estes dados</h2><p id="demo-note">Cadastre medições manuais para acompanhar o consumo.</p><p id="data-note">Informe apenas o consumo medido, evitando registros sobrepostos.</p></aside></div>
+      <section class="card panel measurements" id="medicoes" aria-labelledby="readings-title"><div class="panel-head"><div><h2 id="readings-title">Medições cadastradas</h2><p class="panel-sub" id="readings-sub">Seus registros salvos</p></div><button type="button" class="secondary-btn" id="reload-readings">Atualizar registros</button></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Data</th><th>Cômodo</th><th>Circuito</th><th>Consumo</th><th>Custo estimado</th><th>Ações</th></tr></thead><tbody id="readings-body"></tbody></table></div><p class="entry-empty" id="readings-empty">Cadastre a primeira medição para começar.</p><p class="manual-help">Informe o consumo diário, sem repetir a mesma energia em mais de um registro. Para um circuito que atende vários cômodos, escolha “Circuito compartilhado”.</p></section>
+      <footer class="foot">Sistema Inteligente de Gestão Energética Residencial · Protótipo acadêmico · Registros manuais salvos neste navegador · Exporte backups em Configurações</footer>
+    </main>
+  </div>
+  <dialog class="dialog" id="reading-dialog" aria-labelledby="dialog-title"><form id="reading-form"><h2 id="dialog-title">Adicionar medição</h2><p>Registre o consumo de um dia para o circuito medido.</p><div class="form-grid"><label class="field">Data da medição<input id="reading-date" type="date" required min="2000-01-01" max="2099-12-31"></label><label class="field">Consumo (kWh)<input id="reading-kwh" type="number" min="0" max="10000" step="0.001" inputmode="decimal" placeholder="Ex.: 4,250" required></label><label class="field">Cômodo<select id="reading-room" required></select></label><label class="field">Circuito<select id="reading-circuit" required></select></label><div class="field wide"><small>Se o medidor mostra energia acumulada, informe a diferença entre a leitura final e a inicial do dia. Ex.: 104,25 − 100,00 = 4,25 kWh.</small></div></div><p class="status error" id="form-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="secondary-btn" id="cancel-reading">Cancelar</button><button type="submit" class="primary-btn" id="save-reading">Salvar medição</button></div></form></dialog>
+  <dialog class="dialog" id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Excluir medição?</h2><p id="delete-description"></p><p class="status error" id="delete-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="secondary-btn" id="cancel-delete">Cancelar</button><button type="button" class="primary-btn" id="confirm-delete">Excluir medição</button></div></dialog>
+  <script type="module">
+    import { tariffForDate, estimateCost } from "./energy-cost.js";
+    import { tariffs, mountPages, loadTariffs } from "./local-pages.js";
+    import { storageRequest } from "./storage.js";
+  (() => {
+    'use strict';
+    const DAY = 86400000;
+    const end = new Date(Date.UTC(2026, 8, 27));
+    const rooms = [
+      { id:'sala', name:'Sala', color:'#3e8978', loads:{'Iluminação':0.35,'Tomadas gerais':0.65,'Climatização':2.55} },
+      { id:'cozinha', name:'Cozinha', color:'#d59e46', loads:{'Iluminação':0.30,'Cozinha':3.05} },
+      { id:'quarto1', name:'Quarto 1', color:'#6983c7', loads:{'Iluminação':0.25,'Tomadas gerais':0.40,'Climatização':2.15} },
+      { id:'quarto2', name:'Quarto 2', color:'#9a82b9', loads:{'Iluminação':0.22,'Tomadas gerais':0.37,'Climatização':1.65} },
+      { id:'banheiros', name:'Banheiros', color:'#d87969', loads:{'Iluminação':0.18,'Chuveiros':4.15} },
+      { id:'servico', name:'Área de serviço', color:'#7cae77', loads:{'Iluminação':0.22,'Tomadas gerais':1.12} }
+    ];
+    const circuits = [
+      {name:'Climatização',color:'#6983c7'},{name:'Chuveiros',color:'#d87969'},
+      {name:'Cozinha',color:'#d59e46'},{name:'Tomadas gerais',color:'#3e8978'},
+      {name:'Iluminação',color:'#9a82b9'}
+    ];
+    const records = []; // A versão manual não gera medições simuladas.
+    const sharedRoom={id:'shared',name:'Circuito compartilhado',color:'#7e8d9b',loads:{}};
+    const roomOptions=[...rooms,sharedRoom];
+    let readings=[],loading=true,loadFailed=false,editingId=null,requestId=null,deletingId=null,saving=false;
+    const today=()=>new Date().toLocaleDateString('en-CA');
+    const state = {period:30,metric:'energy',chart:'bars',group:'rooms',focus:null,source:'manual',endDate:today()};
+    const $ = id => document.getElementById(id);
+    const fmt = (n,d=1) => new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
+    const money = n => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:2}).format(n);
+    const shortDate = d => `${String(d.getUTCDate()).padStart(2,'0')}/${String(d.getUTCMonth()+1).padStart(2,'0')}`;
+    // Reúne as medições no período escolhido, mantendo os dias sem registro fora das médias.
+    function rows(){
+      if(state.source==='demo')return records.slice(-state.period);
+      const final=new Date(state.endDate+'T00:00:00Z'),start=new Date(final.getTime()-(state.period-1)*DAY).toISOString().slice(0,10),map=new Map();
+      for(const r of readings.filter(r=>r.date>=start&&r.date<=state.endDate)){
+        if(!map.has(r.date))map.set(r.date,{date:new Date(r.date+'T00:00:00Z'),allocations:[],total:0});
+        const day=map.get(r.date);day.allocations.push({room:r.room,circuit:r.circuit,kwh:r.kwh});day.total+=r.kwh;
+      }
+      return [...map.values()].sort((a,b)=>a.date-b.date);
+    }
+    const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    // Soma o consumo por cômodo ou circuito para comparar os grupos.
+    function aggregate(list,group){
+      const items = group==='rooms' ? (state.source==='manual'?roomOptions:rooms).map(({id,name,color})=>({id,name,color,kwh:0})) : circuits.map(({name,color})=>({id:name,name,color,kwh:0}));
+      const map = new Map(items.map(item=>[item.id,item]));
+      for(const day of list) for(const load of day.allocations) map.get(group==='rooms'?load.room:load.circuit).kwh += load.kwh;
+      return items.filter(item=>state.source==='demo'||list.some(day=>day.allocations.some(a=>(group==='rooms'?a.room:a.circuit)===item.id))).sort((a,b)=>b.kwh-a.kwh);
+    }
+    // Retorna o consumo do grupo selecionado ou de toda a casa.
+    function focusedKwh(day){return state.focus ? day.allocations.filter(a => state.group==='rooms' ? a.room===state.focus : a.circuit===state.focus).reduce((s,a)=>s+a.kwh,0) : day.total}
+    // Atualiza o estado acessível dos botões conforme os filtros ativos.
+    function updateButtons(){for(const [key,selector] of [['period','[data-period]'],['metric','[data-metric]'],['chart','[data-chart]'],['group','[data-group]'],['source','[data-source]']]) document.querySelectorAll(selector).forEach(b=>b.setAttribute('aria-pressed',String(String(state[key])===b.dataset[key])))}
+    // Desenha o histórico de consumo e os detalhes apresentados ao apontar para o gráfico.
+    function drawChart(list){
+      const activeList=state.focus?list.filter(day=>day.allocations.some(a=>state.group==='rooms'?a.room===state.focus:a.circuit===state.focus)):list;
+      const all = activeList.map(day=>({date:day.date,value:state.metric==='cost'?estimateCost(focusedKwh(day),tariffForDate(tariffs,day.date.toISOString().slice(0,10)))?.total??null:focusedKwh(day)}));
+      if(state.metric==='cost'&&all.some(day=>day.value===null)){
+        $('chart').innerHTML='<text x="360" y="120" text-anchor="middle" class="chart-label">Sem tarifa válida para todas as datas deste filtro.</text>';
+        $('chart').onpointermove=null;$('chart-tip').style.display='none';$('history-total').textContent='Indisponível';$('history-average').textContent='Cadastre as vigências em Tarifas.';$('chart-legend').textContent='Valores ausentes não são tratados como custo zero.';return;
+      }
+      if(!all.length){$('chart').innerHTML='<text x="360" y="115" text-anchor="middle" class="chart-label">Nenhuma medição neste período.</text><text x="360" y="140" text-anchor="middle" class="chart-label">Adicione uma medição ou altere a data final.</text>';$('chart').onpointermove=null;$('chart-tip').style.display='none';$('history-total').textContent='—';$('history-average').textContent='';$('history-sub').textContent='Aguardando medições';$('chart-legend').textContent='Dias sem registro não são tratados como consumo zero.';return;}
+      let series=[];
+      if(state.period===90&&state.source==='demo'){for(let i=0;i<all.length;i+=7){const group=all.slice(i,i+7);series.push({date:group[0].date,end:group[group.length-1].date,value:group.reduce((a,b)=>a+b.value,0),days:group.length})}}
+      else series=all.map(o=>({...o,end:o.date,days:1}));
+      const multiplier=1; // Os custos já foram calculados individualmente pela data, antes de agrupar semanas.
+      const max=Math.max(1,...series.map(o=>o.value*multiplier))*1.12;
+      const W=720,H=255, left=46,right=14,top=14,bottom=39,plotW=W-left-right,plotH=H-top-bottom;
+      const y=v=>top+plotH-(v/max)*plotH;
+      const labelValue=v=>state.metric==='cost' ? money(v) : `${fmt(v)} kWh`;
+      let markup='';
+      for(let n=0;n<=4;n++){const v=max*n/4,py=y(v);markup+=`<line class="chart-grid" x1="${left}" x2="${W-right}" y1="${py}" y2="${py}"/><text class="chart-label" x="${left-8}" y="${py+4}" text-anchor="end">${state.metric==='cost'?'R$ '+fmt(v,0):fmt(v,0)}</text>`}
+      const step=plotW/series.length;
+      const points=series.map((s,i)=>({x:left+step*(i+.5),y:y(s.value*multiplier),s}));
+      if(state.chart==='bars'){
+        const width=Math.max(5,Math.min(34,step*.68));
+        markup += points.map(({x,y,s})=>`<rect class="chart-bar" x="${(x-width/2).toFixed(2)}" y="${y.toFixed(2)}" width="${width.toFixed(2)}" height="${Math.max(0,top+plotH-y).toFixed(2)}" rx="${Math.min(4,width/3)}"><title>${shortDate(s.date)}${s.days>1?'–'+shortDate(s.end):''}: ${labelValue(s.value*multiplier)}</title></rect>`).join('');
+      } else {
+        const path=points.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+        markup+=`<path class="chart-area" d="${path} L${points.at(-1).x.toFixed(2)},${(top+plotH).toFixed(2)} L${points[0].x.toFixed(2)},${(top+plotH).toFixed(2)} Z"/><path class="chart-line" d="${path}"/>`;
+        markup+=points.map(({x,y,s})=>`<circle class="chart-point" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="3"><title>${shortDate(s.date)}${s.days>1?'–'+shortDate(s.end):''}: ${labelValue(s.value*multiplier)}</title></circle>`).join('');
+      }
+      const tickEvery=Math.max(1,Math.ceil(series.length/7));
+      markup+=points.map(({x,s},i)=>i%tickEvery===0||i===points.length-1?`<text class="chart-label" x="${x.toFixed(2)}" y="${H-10}" text-anchor="middle">${shortDate(s.date)}</text>`:'').join('');
+      const svg=$('chart');svg.innerHTML=markup;svg.setAttribute('aria-label',`Histórico ${state.metric==='cost'?'de custo estimado':'de consumo'} de ${state.focus?nameForFocus():'casa inteira'} em ${state.period} dias. ${series.length} intervalos.`);
+      const tip=$('chart-tip'),wrap=$('chart-wrap');
+      svg.onpointermove=e=>{const rect=svg.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*W,i=Math.max(0,Math.min(series.length-1,Math.floor((x-left)/step))),s=series[i],screenX=(points[i].x/W)*rect.width;tip.textContent=`${shortDate(s.date)}${s.days>1?'–'+shortDate(s.end):''} · ${labelValue(s.value*multiplier)}`;tip.style.left=`${Math.max(80,Math.min(rect.width-80,screenX))}px`;tip.style.top=`${Math.max(39,((points[i].y/H)*rect.height))}px`;tip.style.display='block'};
+      svg.onpointerleave=()=>{tip.style.display='none'};
+      const total=all.reduce((sum,d)=>sum+d.value,0);
+      $('history-total').textContent=labelValue(total*multiplier);
+      $('history-average').textContent=`${state.metric==='cost'?money(total*multiplier/all.length):fmt(total/all.length)+' kWh'} por dia${state.source==='manual'?' registrado':''}`;
+      $('history-sub').textContent=`${state.focus?nameForFocus():(state.source==='demo'?'Casa inteira':'Todos os registros')} · ${state.period===90&&state.source==='demo'?'consumo semanal':'consumo por dia registrado'}`;
+      $('chart-legend').textContent=`${state.metric==='cost'?'Custo estimado':'Consumo'} ${state.period===90&&state.source==='demo'?'por semana':'por dia'} · ${state.source==='demo'?'dados demonstrativos':'medições manuais'}`;
+    }
+    // Obtém o nome legível do cômodo ou circuito em destaque.
+    function nameForFocus(){return (state.group==='rooms'?roomOptions.find(r=>r.id===state.focus):circuits.find(c=>c.name===state.focus))?.name||'Casa inteira'}
+    // Atualiza os indicadores, gráficos e comparações com os filtros atuais.
+    function render(){
+      updateButtons();
+      const list=rows(),total=list.reduce((sum,d)=>sum+d.total,0),roomList=aggregate(list,'rooms'),comparison=aggregate(list,state.group);
+      const final=state.source==='demo'?end:new Date(state.endDate+'T00:00:00Z'),initial=new Date(final.getTime()-(state.period-1)*DAY);
+      $('period-dates').textContent=`${shortDate(initial)}/${initial.getUTCFullYear()} a ${shortDate(final)}/${final.getUTCFullYear()}`;
+      $('date-control').hidden=state.source!=='manual';$('end-date').value=state.endDate;
+      $('data-badge').textContent=state.source==='demo'?'Dados demonstrativos':'Medições manuais';
+      $('energy-label').textContent=state.source==='demo'?'Consumo no período':'Consumo registrado';
+      $('average-detail').textContent=state.source==='demo'?'Energia por dia selecionado':'Média dos dias com registro';
+      $('demo-note').innerHTML=state.source==='demo'?'Os valores são <span class="note-strong">simulados</span> para demonstrar o dashboard. Os custos usam as configurações por vigência e não representam uma fatura.':'O painel soma somente as <span class="note-strong">medições cadastradas</span>. Dias sem registro não significam consumo zero. O custo depende de tarifa válida para cada data.';
+      $('data-note').textContent=state.source==='demo'?'Dispositivos podem medir a residência, o quadro, um circuito, um cômodo ou um equipamento individual. As divisões mostradas aqui são demonstrativas.':'A abrangência depende do dispositivo: residência, quadro, circuito, cômodo ou equipamento individual. O total registrado pode ser parcial. Compare apenas o que foi medido e não some medições sobrepostas, como um circuito e os equipamentos ligados a ele.';
+      $('kpi-energy').innerHTML=`${fmt(total)} <small>kWh</small>`;
+      $('kpi-energy-detail').textContent=state.source==='demo'?`${state.period} dias · casa inteira`:`${list.length} de ${state.period} dias com registros`;
+      $('kpi-cost').textContent=costText(periodCost(list));
+      $('kpi-average').innerHTML=`${fmt(total/(list.length||1))} <small>kWh</small>`;
+      $('kpi-top').textContent=roomList[0]?.name||'—';
+      $('kpi-top-detail').textContent=total?`${fmt(roomList[0].kwh/total*100,0)}% do consumo ${state.source==='demo'?'da casa':'registrado'}`:'Sem consumo registrado';
+      $('compare-sub').textContent=`Participação por ${state.group==='rooms'?'cômodo':'circuito'} no período`;
+      $('ranking').innerHTML=comparison.map(item=>`<button type="button" class="rank-row${state.focus===item.id?' selected':''}" data-focus="${item.id}" aria-pressed="${state.focus===item.id}" aria-label="Ver histórico de ${item.name}"><span class="rank-top"><span class="name"><span class="swatch" style="background:${item.color}"></span><span>${item.name}</span></span><span class="value">${fmt(item.kwh)} kWh</span></span><span class="rank-track"><span class="rank-fill" style="display:block;width:${(comparison[0].kwh?item.kwh/comparison[0].kwh*100:0).toFixed(1)}%;background:${item.color}"></span></span><span class="rank-foot"><span>${fmt((total?item.kwh/total*100:0),0)}% do total</span><span>${costText(periodCost(list, item.id, state.group))}</span></span></button>`).join('');
+      if(!comparison.length)$('ranking').innerHTML='<p class="entry-empty">As comparações aparecerão após o primeiro registro.</p>';
+      $('clear-focus').hidden=!state.focus;
+      $('detail-sub').textContent=`Consumo por ${state.group==='rooms'?'cômodo':'circuito'} nos últimos ${state.period} dias`;
+      $('table-first').textContent=state.group==='rooms'?'Cômodo':'Circuito';
+      $('detail-body').innerHTML=comparison.map(item=>`<tr><td>${item.name}</td><td>${fmt(item.kwh)} kWh</td><td>${fmt((total?item.kwh/total*100:0),0)}%</td><td>${costText(periodCost(list, item.id, state.group))}</td></tr>`).join('');
+      if(state.source==='manual'&&!list.length){for(const id of ['kpi-energy','kpi-cost','kpi-average'])$(id).textContent='—';}
+      renderCostBreakdown(list);
+      drawChart(list);
+    }
+    /** Soma componentes por data e grupo; qualquer lacuna impede apresentar um total completo. */
+    function periodCost(list, id=null, group=state.group){
+      const totals={te:0,tusd:0,flag:0,others:0,pis:0,cofins:0,icms:0,taxes:0,total:0,missing:0,days:0};
+      for(const day of list){
+        const loads=id?day.allocations.filter(a=>(group==='rooms'?a.room:a.circuit)===id):day.allocations;
+        if(!loads.length)continue;
+        totals.days++;
+        const result=estimateCost(loads.reduce((sum,a)=>sum+a.kwh,0),tariffForDate(tariffs,day.date.toISOString().slice(0,10)));
+        if(!result){totals.missing++;continue;}
+        for(const key of Object.keys(result))totals[key]+=result[key];
+      }
+      return totals;
+    }
+    /** Nunca transforma ausência de tarifa ou de medições em custo zero. */
+    function costText(result){return !result.days?'—':result.missing?'Sem tarifa':money(result.total);}
+    /** Expõe os componentes e avisa sobre datas sem configuração, sem mostrar um total parcial como completo. */
+    function renderCostBreakdown(list){
+      const cost=periodCost(list);
+      $('cost-warning').textContent=!cost.days?'Nenhuma medição no período.':cost.missing?cost.missing+' dia(s) com consumo sem tarifa válida. Cadastre as vigências em Tarifas.':'Todas as datas com consumo têm tarifa válida.';
+      $('cost-parts').innerHTML=cost.missing||!cost.days?'':[['TE','te'],['TUSD','tusd'],['Bandeira','flag'],['Outros','others'],['PIS','pis'],['COFINS','cofins'],['ICMS','icms'],['Total estimado','total']].map(([label,key])=>'<div class="cost-item"><span>'+label+'</span><strong>'+money(cost[key])+'</strong></div>').join('');
+    }
+    // Valida e aplica os filtros solicitados antes de redesenhar o painel.
+    function setView(input){
+      if(!input||typeof input!=='object')throw new Error('Configuração inválida');
+      const next={...state};
+      if(input.source!==undefined){if(input.source !== 'manual')throw new Error('Fonte inválida');next.source=input.source;next.focus=null;}
+      if(input.endDate!==undefined){if(!/^20\d{2}-\d{2}-\d{2}$/.test(input.endDate)||Number.isNaN(Date.parse(input.endDate+'T00:00:00Z'))||new Date(input.endDate+'T00:00:00Z').toISOString().slice(0,10)!==input.endDate)throw new Error('Data inválida');next.endDate=input.endDate;}
+      if(input.period!==undefined){const p=Number(input.period);if(![7,30,90].includes(p))throw new Error('Período deve ser 7, 30 ou 90 dias');next.period=p}
+      if(input.metric!==undefined){if(!['energy','cost'].includes(input.metric))throw new Error('Unidade inválida');next.metric=input.metric}
+      if(input.chart!==undefined){if(!['bars','line'].includes(input.chart))throw new Error('Gráfico inválido');next.chart=input.chart}
+      if(input.group!==undefined){if(!['rooms','circuits'].includes(input.group))throw new Error('Agrupamento inválido');if(input.group!==next.group){next.group=input.group;next.focus=null}}
+      if(input.focus!==undefined){const options=next.group==='rooms'?roomOptions.map(r=>r.id):circuits.map(c=>c.name);if(input.focus!==null&&!options.includes(input.focus))throw new Error('Seleção inválida');next.focus=input.focus}
+      Object.assign(state,next);render();
+      return {period:state.period,metric:state.metric,chart:state.chart,group:state.group,focus:state.focus,source:state.source,endDate:state.endDate};
+    }
+    document.querySelectorAll('[data-period],[data-metric],[data-chart],[data-group],[data-source]').forEach(b=>b.addEventListener('click',()=>setView({[Object.keys(b.dataset)[0]]:b.dataset[Object.keys(b.dataset)[0]]})));
+    $('ranking').addEventListener('click',e=>{const b=e.target.closest('[data-focus]');if(b)setView({focus:state.focus===b.dataset.focus?null:b.dataset.focus})});
+    $('clear-focus').addEventListener('click',()=>setView({focus:null}));
+    $('end-date').addEventListener('change',()=>{try{setView({endDate:$('end-date').value})}catch(error){$('load-status').textContent=error.message}});
+    // Mostra as medições manuais com comandos para editar e excluir.
+    function renderReadings(){
+      $('readings-sub').textContent=loading?'Carregando…':`${readings.length} ${readings.length===1?'registro salvo':'registros salvos'} · todos os períodos`;
+      $('readings-empty').hidden=loading||readings.length>0;
+      $('readings-empty').textContent=loadFailed?'Não foi possível carregar os registros. Use “Atualizar registros” para tentar novamente.':'Cadastre a primeira medição para começar.';
+      $('readings-body').innerHTML=readings.map(r=>`<tr><td>${r.date.split('-').reverse().join('/')}</td><td>${esc(roomOptions.find(x=>x.id===r.room)?.name||r.room)}</td><td>${esc(r.circuit)}</td><td>${fmt(r.kwh,3)} kWh</td><td>${tariffForDate(tariffs,r.date)?money(estimateCost(r.kwh,tariffForDate(tariffs,r.date)).total):'Sem tarifa válida'}</td><td><span class="table-actions"><button class="link-btn" data-edit="${esc(r.id)}" aria-label="Editar medição de ${r.date}">Editar</button><button class="link-btn danger" data-delete="${esc(r.id)}" aria-label="Excluir medição de ${r.date}">Excluir</button></span></td></tr>`).join('');
+    }
+    /** Valida e persiste as medições no navegador, sem enviar dados a um servidor. */
+    async function request(method, body) { return storageRequest('readings', method, body); }
+    // Carrega os registros salvos e atualiza a tabela e o estado de carregamento.
+    async function loadReadings(initial=false){
+      loading=true;$('reload-readings').disabled=true;$('load-status').className='status';$('load-status').textContent='Carregando suas medições…';renderReadings();
+      try{const data=await request('GET');readings=data.readings;loadFailed=false;if(initial&&readings.length){state.source='manual';state.endDate=readings[0].date;}$('load-status').textContent=readings.length?'Medições carregadas.':'Comece em “Adicionar medição” para usar seus próprios dados.';}
+      catch(error){loadFailed=true;$('load-status').className='status error';$('load-status').textContent=error.message;}
+      finally{loading=false;$('reload-readings').disabled=false;renderReadings();render();}
+    }
+    // Preenche o formulário para criar uma medição ou editar um registro existente.
+    function openForm(id=null){
+      editingId=id;requestId=id||crypto.randomUUID();const r=readings.find(x=>x.id===id);
+      $('reading-form').reset();$('dialog-title').textContent=id?'Editar medição':'Adicionar medição';$('reading-date').value=r?.date||today();$('reading-kwh').value=r?.kwh??'';$('reading-room').value=r?.room||'shared';$('reading-circuit').value=r?.circuit||'Tomadas gerais';$('form-error').hidden=true;$('reading-dialog').showModal();
+    }
+    $('reading-room').innerHTML=roomOptions.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+    $('reading-circuit').innerHTML=circuits.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+    $('add-reading').addEventListener('click',()=>openForm());$('cancel-reading').addEventListener('click',()=>{if(!saving)$('reading-dialog').close()});
+    $('reading-dialog').addEventListener('cancel',e=>{if(saving)e.preventDefault()});
+    $('reading-form').addEventListener('submit',async e=>{
+      e.preventDefault();if(saving)return;saving=true;$('save-reading').disabled=true;$('cancel-reading').disabled=true;$('form-error').hidden=true;
+      const payload={id:requestId,date:$('reading-date').value,room:$('reading-room').value,circuit:$('reading-circuit').value,kwh:Number($('reading-kwh').value)};
+      try{const data=await request(editingId?'PUT':'POST',payload);readings=[...readings.filter(r=>r.id!==data.reading.id),data.reading].sort((a,b)=>b.date.localeCompare(a.date));state.source='manual';state.endDate=data.reading.date;state.focus=null;renderReadings();render();$('reading-dialog').close();$('load-status').className='status';$('load-status').textContent='Medição salva. O painel foi atualizado.';}
+      catch(error){$('form-error').textContent=error.message;$('form-error').hidden=false;}
+      finally{saving=false;$('save-reading').disabled=false;$('cancel-reading').disabled=false;}
+    });
+    $('reload-readings').addEventListener('click',()=>loadReadings());
+    $('readings-body').addEventListener('click',e=>{const edit=e.target.closest('[data-edit]'),remove=e.target.closest('[data-delete]');if(edit)openForm(edit.dataset.edit);if(remove){deletingId=remove.dataset.delete;const r=readings.find(x=>x.id===deletingId);$('delete-description').textContent=`${r.date.split('-').reverse().join('/')} · ${r.circuit} · ${fmt(r.kwh,3)} kWh. O registro será removido do painel.`;$('delete-error').hidden=true;$('delete-dialog').showModal();}});
+    $('cancel-delete').addEventListener('click',()=>{if(!saving)$('delete-dialog').close()});$('delete-dialog').addEventListener('cancel',e=>{if(saving)e.preventDefault()});
+    $('confirm-delete').addEventListener('click',async()=>{if(saving)return;saving=true;$('confirm-delete').disabled=true;$('cancel-delete').disabled=true;try{await request('DELETE',{id:deletingId});readings=readings.filter(r=>r.id!==deletingId);renderReadings();render();$('delete-dialog').close();$('load-status').textContent='Medição excluída.';}catch(error){$('delete-error').textContent=error.message;$('delete-error').hidden=false;}finally{saving=false;$('confirm-delete').disabled=false;$('cancel-delete').disabled=false;}});
+    // Recalcula também a lista quando uma configuração de tarifa muda.
+    mountPages(()=>{render();renderReadings();});
+    render();loadReadings(true);loadTariffs();
+    // Importações e alterações em outra aba recarregam os dados persistidos.
+    window.addEventListener('energy-data-changed', () => { loadReadings(true); loadTariffs(); });
+
+  })();
+  </script>
+</body>
+</html>

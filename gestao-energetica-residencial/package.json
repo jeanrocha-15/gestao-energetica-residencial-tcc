@@ -5,14 +5,10 @@
   "type": "module",
   "packageManager": "pnpm@11.25.0",
   "scripts": {
-    "dev": "node scripts/local.mjs dev",
-    "build": "node scripts/local.mjs build",
-    "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "install:ci": "node ./scripts/install-ci.mjs",
-    "dev:local": "node scripts/local.mjs dev",
-    "db:migrate": "node scripts/local.mjs migrate",
-    "test:local": "node scripts/test-local.mjs"
+    "dev": "node scripts/serve-static.mjs",
+    "build": "node scripts/build-static.mjs",
+    "test": "node --experimental-vm-modules scripts/test-static.mjs",
+    "test:local": "node --experimental-vm-modules scripts/test-static.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
