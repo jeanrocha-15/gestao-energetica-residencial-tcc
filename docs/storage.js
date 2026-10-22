@@ -39,10 +39,23 @@ function writeData(value) {
   return data;
 }
 
-/** Insere a base padrão uma única vez em um navegador sem medições, preservando dados existentes. */
+/** Corrige as datas antigas da base padrão e inicializa navegadores vazios sem recriar exclusões. */
 export async function initializeDefaultReadings() {
   return withLock(() => {
     const data = readData();
+    const defaults = createDefaultReadings();
+    let changed = false;
+    for (let index = 0; index < defaults.length; index++) {
+      const target = defaults[index], oldDate = `2026-10-${16 + index % 7}`;
+      const existing = data.readings.find(item => item.id === target.id);
+      // Só corrige a data originalmente gerada; preserva valores editados e datas escolhidas depois.
+      if (!existing || !existing.estimatedDaily || existing.date !== oldDate) continue;
+      const conflict = data.readings.some(item => item.id !== existing.id && item.date === target.date && item.room === existing.room && item.circuit === existing.circuit);
+      if (conflict) throw new Error('Não foi possível corrigir as datas padrão: já existe um registro para o mesmo circuito em setembro. Edite o registro conflitante e recarregue. Nenhum dado foi substituído.');
+      existing.date = target.date;
+      changed = true;
+    }
+    if (changed) return writeData(data);
     if (data.defaultsApplied) return data;
     if (!data.readings.length) data.readings = createDefaultReadings();
     // Persiste a marca também após excluir os registros, para não recriá-los ao recarregar.

@@ -16,8 +16,8 @@ export function createDefaultReadings() {
     for (let remaining = cents - portions.reduce((sum, value) => sum + value, 0), i = 0; remaining > 0; remaining--, i++) portions[i]++;
     return portions.map((value, day) => ({
       id: `20261022-0000-4000-8000-${String(circuitIndex * 7 + day + 1).padStart(12, '0')}`,
-      // Datas de referência para exibição: a fonte não informa as datas reais de coleta.
-      date: `2026-10-${16 + day}`, room: 'shared', circuit, kwh: value / 100,
+      // Período de registro confirmado pelo responsável: 8 a 14 de setembro de 2026.
+      date: `2026-09-${String(8 + day).padStart(2, '0')}`, room: 'shared', circuit, kwh: value / 100,
       estimatedDaily: true,
     }));
   });
