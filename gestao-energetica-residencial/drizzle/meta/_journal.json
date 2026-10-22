@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1790600722361,
+      "tag": "0000_huge_charles_xavier",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790600722362,
+      "tag": "0001_tuya",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1790687122361,
+      "tag": "0002_tariffs_local_auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1790703169824,
+      "tag": "0003_devices",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1790705623868,
+      "tag": "0004_tuya_account_mapping",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1790707982818,
+      "tag": "0005_tuya_oauth_collection",
+      "breakpoints": true
+    }
+  ]
+}

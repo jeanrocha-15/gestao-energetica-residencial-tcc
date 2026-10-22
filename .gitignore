@@ -1,0 +1,22 @@
+# Dependências, saídas de compilação e dados locais
+node_modules/
+build/
+dist/
+.next/
+.vinext/
+.wrangler/
+.sites-runtime/
+.openai/
+.codex/
+.agents/
+.aws/
+.env*
+.dev.vars*
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite*
+*.db
+*.log
+*.tsbuildinfo

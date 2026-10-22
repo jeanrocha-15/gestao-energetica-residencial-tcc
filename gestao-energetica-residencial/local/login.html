@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Entrar · Gestão Energética</title>
+<style>body{font:16px system-ui;background:#f3f6f8;color:#18263a;display:grid;place-items:center;min-height:95vh;margin:0}main{background:white;border:1px solid #dbe5eb;border-radius:20px;padding:32px;max-width:420px;width:calc(100% - 90px)}h1{font-size:28px}label{display:grid;gap:8px;margin:20px 0}input,button{font:inherit;padding:12px;border:1px solid #cbd8df;border-radius:8px}button{cursor:pointer;background:#234d3d;color:white}button+button{background:white;color:#234d3d}p{line-height:1.5;color:#586d7c}#error{color:#ac3030}</style></head>
+<body><main><p>RESIDENCIAL · TCC · LOCALHOST</p><h1>Gestão Energética</h1><p>Entre na sua conta local ou crie uma conta neste computador. Os dados ficam separados por usuário.</p><form id="login"><label>E-mail<input name="email" type="email" autocomplete="username" required maxlength="160"></label><label>Senha local<input name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="128"></label><button name="action" value="login">Entrar</button> <button name="action" value="register">Criar conta local</button><p id="error" role="alert"></p></form><p>Esta conta não acessa ChatGPT ou o banco hospedado.</p></main>
+<script>
+/** Envia a senha somente para o servidor local; o navegador não a persiste. */
+document.getElementById('login').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget, action = event.submitter.value;
+  const body = Object.fromEntries(new FormData(form));
+  for (const button of form.querySelectorAll('button')) button.disabled = true;
+  try {
+    const response = await fetch('/api/auth/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    location.assign('/');
+  } catch (error) { document.getElementById('error').textContent = error.message; }
+  finally { for (const button of form.querySelectorAll('button')) button.disabled = false; }
+});
+</script></body></html>
