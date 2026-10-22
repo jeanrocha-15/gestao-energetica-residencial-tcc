@@ -1,6 +1,6 @@
-import { validateReading } from './readings.js';
-import { validateTariff } from './tariffs.js';
-import { createDefaultReadings } from './default-readings.js';
+import { validateReading } from './readings.js?v=cd6b0e211c3972aa';
+import { validateTariff } from './tariffs.js?v=cd6b0e211c3972aa';
+import { createDefaultReadings } from './default-readings.js?v=cd6b0e211c3972aa';
 
 export const STORAGE_KEY = 'gestao-energetica-residencial-tcc:v1';
 

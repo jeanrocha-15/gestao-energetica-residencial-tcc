@@ -53,9 +53,9 @@
   <dialog class="dialog" id="reading-dialog" aria-labelledby="dialog-title"><form id="reading-form"><h2 id="dialog-title">Adicionar medição</h2><p>Registre o consumo de um dia para o circuito medido.</p><div class="form-grid"><label class="field">Data da medição<input id="reading-date" type="date" required min="2000-01-01" max="2099-12-31"></label><label class="field">Consumo (kWh)<input id="reading-kwh" type="number" min="0" max="10000" step="0.001" inputmode="decimal" placeholder="Ex.: 4,250" required></label><label class="field">Cômodo<select id="reading-room" required></select></label><label class="field">Circuito<select id="reading-circuit" required></select></label><div class="field wide"><small>Se o medidor mostra energia acumulada, informe a diferença entre a leitura final e a inicial do dia. Ex.: 104,25 − 100,00 = 4,25 kWh.</small></div></div><p class="status error" id="form-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="secondary-btn" id="cancel-reading">Cancelar</button><button type="submit" class="primary-btn" id="save-reading">Salvar medição</button></div></form></dialog>
   <dialog class="dialog" id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Excluir medição?</h2><p id="delete-description"></p><p class="status error" id="delete-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="secondary-btn" id="cancel-delete">Cancelar</button><button type="button" class="primary-btn" id="confirm-delete">Excluir medição</button></div></dialog>
   <script type="module">
-    import { tariffForDate, estimateCost } from "./energy-cost.js";
-    import { tariffs, mountPages, loadTariffs } from "./local-pages.js";
-    import { storageRequest, initializeDefaultReadings } from "./storage.js";
+    import { tariffForDate, estimateCost } from "./energy-cost.js?v=cd6b0e211c3972aa";
+    import { tariffs, mountPages, loadTariffs } from "./local-pages.js?v=cd6b0e211c3972aa";
+    import { storageRequest, initializeDefaultReadings } from "./storage.js?v=cd6b0e211c3972aa";
   (() => {
     'use strict';
     const DAY = 86400000;

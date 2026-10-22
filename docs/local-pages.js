@@ -1,5 +1,5 @@
-import { storageRequest, exportBackup, importBackup } from './storage.js';
-import { flagPerKwh } from './energy-cost.js';
+import { storageRequest, exportBackup, importBackup } from './storage.js?v=cd6b0e211c3972aa';
+import { flagPerKwh } from './energy-cost.js?v=cd6b0e211c3972aa';
 export let tariffs = [];
 let refreshDashboard;
 const tariffHelp = {
