@@ -39,6 +39,7 @@
     <main class="main" id="visao-geral">
       <header class="topline"><div><p class="eyebrow">Painel de consumo</p><h1>Visão geral da residência</h1><p>Energia por cômodo e circuito, em um só lugar.</p></div><span class="demo-badge" id="data-badge">Medições manuais</span></header>
       <div class="source-line"><span>Entrada manual · dados salvos neste navegador</span><button type="button" class="primary-btn" id="add-reading">+ Adicionar medição</button></div>
+      <p class="status" data-pages="/,/comparacao,/historico,/medicoes">Base coletada: 96,10 kWh em oito circuitos. A divisão diária é estimada em sete parcelas desiguais; 16–22/10/2026 são datas de referência, não datas comprovadas de coleta. Os circuitos não foram necessariamente medidos simultaneamente.</p>
       <p class="status" id="load-status" role="status">Carregando suas medições…</p>
       <div class="toolbar" aria-label="Filtros do painel"><div class="left"><span class="control-label">Período</span><div class="segmented" role="group" aria-label="Selecionar período"><button type="button" data-period="7" aria-pressed="false">7 dias</button><button type="button" data-period="30" aria-pressed="true">30 dias</button><button type="button" data-period="90" aria-pressed="false">90 dias</button></div></div><div class="right"><label class="date-control" id="date-control" hidden>Até <input type="date" id="end-date" aria-label="Data final do período"></label><span class="period-dates" id="period-dates"></span></div></div>
       <section class="kpis" aria-label="Indicadores da residência"><article class="card kpi feature"><span class="kpi-label" id="energy-label">Consumo no período</span><div class="kpi-value" id="kpi-energy">—</div><span class="kpi-detail" id="kpi-energy-detail">—</span></article><article class="card kpi"><span class="kpi-label">Custo estimado</span><div class="kpi-value" id="kpi-cost">—</div><span class="kpi-detail">Conforme vigência de cada data</span></article><article class="card kpi"><span class="kpi-label">Média diária</span><div class="kpi-value" id="kpi-average">—</div><span class="kpi-detail" id="average-detail">Energia por dia selecionado</span></article><article class="card kpi"><span class="kpi-label">Maior consumo</span><div class="kpi-value" id="kpi-top">—</div><span class="kpi-detail" id="kpi-top-detail">—</span></article></section>
@@ -54,7 +55,7 @@
   <script type="module">
     import { tariffForDate, estimateCost } from "./energy-cost.js";
     import { tariffs, mountPages, loadTariffs } from "./local-pages.js";
-    import { storageRequest } from "./storage.js";
+    import { storageRequest, initializeDefaultReadings } from "./storage.js";
   (() => {
     'use strict';
     const DAY = 86400000;
@@ -70,14 +71,14 @@
     const circuits = [
       {name:'Climatização',color:'#6983c7'},{name:'Chuveiros',color:'#d87969'},
       {name:'Cozinha',color:'#d59e46'},{name:'Tomadas gerais',color:'#3e8978'},
-      {name:'Iluminação',color:'#9a82b9'}
+      {name:'Iluminação',color:'#9a82b9'},{name:"Chuveiro",color:'#d87969'},{name:"Ar-condicionado",color:'#6983c7'},{name:"Tomadas da cozinha",color:'#d59e46'},{name:"Tomadas da sala",color:'#3e8978'},{name:"Geladeira",color:'#6294a6'},{name:"Máquina de lavar",color:'#7cae77'},{name:"Circuito adicional",color:'#7e8d9b'}
     ];
     const records = []; // A versão manual não gera medições simuladas.
     const sharedRoom={id:'shared',name:'Circuito compartilhado',color:'#7e8d9b',loads:{}};
     const roomOptions=[...rooms,sharedRoom];
     let readings=[],loading=true,loadFailed=false,editingId=null,requestId=null,deletingId=null,saving=false;
     const today=()=>new Date().toLocaleDateString('en-CA');
-    const state = {period:30,metric:'energy',chart:'bars',group:'rooms',focus:null,source:'manual',endDate:today()};
+    const state = {period:7,metric:'energy',chart:'bars',group:'circuits',focus:null,source:'manual',endDate:today()};
     const $ = id => document.getElementById(id);
     const fmt = (n,d=1) => new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
     const money = n => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:2}).format(n);
@@ -166,7 +167,7 @@
       $('kpi-top').textContent=roomList[0]?.name||'—';
       $('kpi-top-detail').textContent=total?`${fmt(roomList[0].kwh/total*100,0)}% do consumo ${state.source==='demo'?'da casa':'registrado'}`:'Sem consumo registrado';
       $('compare-sub').textContent=`Participação por ${state.group==='rooms'?'cômodo':'circuito'} no período`;
-      $('ranking').innerHTML=comparison.map(item=>`<button type="button" class="rank-row${state.focus===item.id?' selected':''}" data-focus="${item.id}" aria-pressed="${state.focus===item.id}" aria-label="Ver histórico de ${item.name}"><span class="rank-top"><span class="name"><span class="swatch" style="background:${item.color}"></span><span>${item.name}</span></span><span class="value">${fmt(item.kwh)} kWh</span></span><span class="rank-track"><span class="rank-fill" style="display:block;width:${(comparison[0].kwh?item.kwh/comparison[0].kwh*100:0).toFixed(1)}%;background:${item.color}"></span></span><span class="rank-foot"><span>${fmt((total?item.kwh/total*100:0),0)}% do total</span><span>${costText(periodCost(list, item.id, state.group))}</span></span></button>`).join('');
+      $('ranking').innerHTML=comparison.map(item=>`<button type="button" class="rank-row${state.focus===item.id?' selected':''}" data-focus="${item.id}" aria-pressed="${state.focus===item.id}" aria-label="Ver histórico de ${item.name}"><span class="rank-top"><span class="name"><span class="swatch" style="background:${item.color}"></span><span>${item.name}</span></span><span class="value">${fmt(item.kwh)} kWh</span></span><span class="rank-track"><span class="rank-fill" style="display:block;width:${(comparison[0].kwh?item.kwh/comparison[0].kwh*100:0).toFixed(1)}%;background:${item.color}"></span></span><span class="rank-foot"><span>${fmt((total?item.kwh/total*100:0),2)}% do total</span><span>${costText(periodCost(list, item.id, state.group))}</span></span></button>`).join('');
       if(!comparison.length)$('ranking').innerHTML='<p class="entry-empty">As comparações aparecerão após o primeiro registro.</p>';
       $('clear-focus').hidden=!state.focus;
       $('detail-sub').textContent=`Consumo por ${state.group==='rooms'?'cômodo':'circuito'} nos últimos ${state.period} dias`;
@@ -220,14 +221,14 @@
       $('readings-sub').textContent=loading?'Carregando…':`${readings.length} ${readings.length===1?'registro salvo':'registros salvos'} · todos os períodos`;
       $('readings-empty').hidden=loading||readings.length>0;
       $('readings-empty').textContent=loadFailed?'Não foi possível carregar os registros. Use “Atualizar registros” para tentar novamente.':'Cadastre a primeira medição para começar.';
-      $('readings-body').innerHTML=readings.map(r=>`<tr><td>${r.date.split('-').reverse().join('/')}</td><td>${esc(roomOptions.find(x=>x.id===r.room)?.name||r.room)}</td><td>${esc(r.circuit)}</td><td>${fmt(r.kwh,3)} kWh</td><td>${tariffForDate(tariffs,r.date)?money(estimateCost(r.kwh,tariffForDate(tariffs,r.date)).total):'Sem tarifa válida'}</td><td><span class="table-actions"><button class="link-btn" data-edit="${esc(r.id)}" aria-label="Editar medição de ${r.date}">Editar</button><button class="link-btn danger" data-delete="${esc(r.id)}" aria-label="Excluir medição de ${r.date}">Excluir</button></span></td></tr>`).join('');
+      $('readings-body').innerHTML=readings.map(r=>`<tr><td>${r.date.split('-').reverse().join('/')}</td><td>${esc(roomOptions.find(x=>x.id===r.room)?.name||r.room)}</td><td>${esc(r.circuit)}${r.estimatedDaily ? '<small style="display:block">Distribuição diária estimada</small>' : ''}</td><td>${fmt(r.kwh,3)} kWh</td><td>${tariffForDate(tariffs,r.date)?money(estimateCost(r.kwh,tariffForDate(tariffs,r.date)).total):'Sem tarifa válida'}</td><td><span class="table-actions"><button class="link-btn" data-edit="${esc(r.id)}" aria-label="Editar medição de ${r.date}">Editar</button><button class="link-btn danger" data-delete="${esc(r.id)}" aria-label="Excluir medição de ${r.date}">Excluir</button></span></td></tr>`).join('');
     }
     /** Valida e persiste as medições no navegador, sem enviar dados a um servidor. */
     async function request(method, body) { return storageRequest('readings', method, body); }
     // Carrega os registros salvos e atualiza a tabela e o estado de carregamento.
     async function loadReadings(initial=false){
       loading=true;$('reload-readings').disabled=true;$('load-status').className='status';$('load-status').textContent='Carregando suas medições…';renderReadings();
-      try{const data=await request('GET');readings=data.readings;loadFailed=false;if(initial&&readings.length){state.source='manual';state.endDate=readings[0].date;}$('load-status').textContent=readings.length?'Medições carregadas.':'Comece em “Adicionar medição” para usar seus próprios dados.';}
+      try{if(initial)await initializeDefaultReadings();const data=await request('GET');readings=data.readings;loadFailed=false;if(initial&&readings.length){state.source='manual';state.endDate=readings[0].date;}$('load-status').textContent=readings.length?'Medições carregadas.':'Comece em “Adicionar medição” para usar seus próprios dados.';}
       catch(error){loadFailed=true;$('load-status').className='status error';$('load-status').textContent=error.message;}
       finally{loading=false;$('reload-readings').disabled=false;renderReadings();render();}
     }
@@ -242,7 +243,7 @@
     $('reading-dialog').addEventListener('cancel',e=>{if(saving)e.preventDefault()});
     $('reading-form').addEventListener('submit',async e=>{
       e.preventDefault();if(saving)return;saving=true;$('save-reading').disabled=true;$('cancel-reading').disabled=true;$('form-error').hidden=true;
-      const payload={id:requestId,date:$('reading-date').value,room:$('reading-room').value,circuit:$('reading-circuit').value,kwh:Number($('reading-kwh').value)};
+      const payload={id:requestId,estimatedDaily:readings.find(r=>r.id===editingId)?.estimatedDaily===true,date:$('reading-date').value,room:$('reading-room').value,circuit:$('reading-circuit').value,kwh:Number($('reading-kwh').value)};
       try{const data=await request(editingId?'PUT':'POST',payload);readings=[...readings.filter(r=>r.id!==data.reading.id),data.reading].sort((a,b)=>b.date.localeCompare(a.date));state.source='manual';state.endDate=data.reading.date;state.focus=null;renderReadings();render();$('reading-dialog').close();$('load-status').className='status';$('load-status').textContent='Medição salva. O painel foi atualizado.';}
       catch(error){$('form-error').textContent=error.message;$('form-error').hidden=false;}
       finally{saving=false;$('save-reading').disabled=false;$('cancel-reading').disabled=false;}

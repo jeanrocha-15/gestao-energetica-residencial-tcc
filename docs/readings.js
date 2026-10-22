@@ -1,5 +1,5 @@
 export const roomIds = ['sala', 'cozinha', 'quarto1', 'quarto2', 'banheiros', 'servico', 'shared'];
-export const circuitNames = ['Climatização', 'Chuveiros', 'Cozinha', 'Tomadas gerais', 'Iluminação'];
+export const circuitNames = ['Climatização', 'Chuveiros', 'Cozinha', 'Tomadas gerais', 'Iluminação',"Chuveiro","Ar-condicionado","Tomadas da cozinha","Tomadas da sala","Geladeira","Máquina de lavar","Circuito adicional"];
 /** Confere data, cômodo, circuito e consumo antes de permitir que uma medição seja salva. */
 export function validateReading(input) {
     if (!input || typeof input !== 'object')
@@ -15,5 +15,5 @@ export function validateReading(input) {
         throw new Error('Selecione um circuito válido.');
     if (typeof v.kwh !== 'number' || !Number.isFinite(v.kwh) || v.kwh < 0 || v.kwh > 10000)
         throw new Error('Informe o consumo entre 0 e 10.000 kWh.');
-    return { id: v.id, date: v.date, room: v.room, circuit: v.circuit, kwh: Math.round(v.kwh * 1000) / 1000 };
+    return { id: v.id, date: v.date, room: v.room, circuit: v.circuit, kwh: Math.round(v.kwh * 1000) / 1000, ...(v.estimatedDaily === true ? {estimatedDaily:true} : {}) };
 }

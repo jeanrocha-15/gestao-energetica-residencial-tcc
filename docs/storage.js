@@ -1,5 +1,6 @@
 import { validateReading } from './readings.js';
 import { validateTariff } from './tariffs.js';
+import { createDefaultReadings } from './default-readings.js';
 
 export const STORAGE_KEY = 'gestao-energetica-residencial-tcc:v1';
 
@@ -17,7 +18,7 @@ export function validateData(value) {
     if (tariffs[i].startDate <= tariffs[i-1].endDate) throw new Error('As vigências das tarifas não podem se sobrepor.');
   }
   readings.sort((a,b) => b.date.localeCompare(a.date));
-  return { version:1, readings, tariffs };
+  return { version:1, readings, tariffs, defaultsApplied: value.defaultsApplied === true };
 }
 
 /** Lê uma única chave isolada do projeto; dados inválidos nunca são apagados silenciosamente. */
@@ -36,6 +37,18 @@ function writeData(value) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
   catch { throw new Error('Não foi possível salvar. O armazenamento está bloqueado ou cheio. Exporte um backup antes de liberar espaço.'); }
   return data;
+}
+
+/** Insere a base padrão uma única vez em um navegador sem medições, preservando dados existentes. */
+export async function initializeDefaultReadings() {
+  return withLock(() => {
+    const data = readData();
+    if (data.defaultsApplied) return data;
+    if (!data.readings.length) data.readings = createDefaultReadings();
+    // Persiste a marca também após excluir os registros, para não recriá-los ao recarregar.
+    data.defaultsApplied = true;
+    return writeData(data);
+  });
 }
 
 /** Serializa gravações entre abas quando o navegador oferece Web Locks. */
