@@ -21,8 +21,8 @@ export function validateTariff(input) {
     if (endDate < startDate)
         throw new Error('O fim da vigência deve ser igual ou posterior ao início.');
     const c = v.config;
-    if (!c || c.taxModel !== 'outside-v1')
-        throw new Error('Confirme o modelo de estimativa de tributos por fora.');
+    if (!c || !['outside-v1', 'included-v1'].includes(String(c.taxModel)))
+        throw new Error('Selecione um modelo de tributos válido.');
     if (!['Verde', 'Amarela', 'Vermelha Patamar 1', 'Vermelha Patamar 2'].includes(String(c.flag)))
         throw new Error('Bandeira inválida.');
     if (!['BRL_KWH', 'BRL_100_KWH'].includes(String(c.flagUnit)))
@@ -34,5 +34,5 @@ export function validateTariff(input) {
             throw new Error('Nome do componente inválido.');
         return { name: item.name.trim(), value: number(item.value, 1000) };
     });
-    return { id: v.id, startDate, endDate, config: { te: number(c.te, 1000), tusd: number(c.tusd, 1000), pis: number(c.pis, 100), cofins: number(c.cofins, 100), icms: number(c.icms, 100), flag: String(c.flag), flagUnit: String(c.flagUnit), flagValue: number(c.flagValue, 10000), others, taxModel: 'outside-v1' } };
+    return { id: v.id, startDate, endDate, config: { te: number(c.te, 1000), tusd: number(c.tusd, 1000), pis: number(c.pis, 100), cofins: number(c.cofins, 100), icms: number(c.icms, 100), flag: String(c.flag), flagUnit: String(c.flagUnit), flagValue: number(c.flagValue, 10000), others, taxModel: c.taxModel } };
 }

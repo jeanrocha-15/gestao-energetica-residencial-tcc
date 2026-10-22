@@ -18,7 +18,7 @@ export function validateData(value) {
     if (tariffs[i].startDate <= tariffs[i-1].endDate) throw new Error('As vigências das tarifas não podem se sobrepor.');
   }
   readings.sort((a,b) => b.date.localeCompare(a.date));
-  return { version:1, readings, tariffs, defaultsApplied: value.defaultsApplied === true };
+  return { version:1, readings, tariffs, defaultsApplied: value.defaultsApplied === true, defaultTariffApplied: value.defaultTariffApplied === true };
 }
 
 /** Lê uma única chave isolada do projeto; dados inválidos nunca são apagados silenciosamente. */
@@ -60,6 +60,24 @@ export async function initializeDefaultReadings() {
     if (!data.readings.length) data.readings = createDefaultReadings();
     // Persiste a marca também após excluir os registros, para não recriá-los ao recarregar.
     data.defaultsApplied = true;
+    return writeData(data);
+  });
+}
+
+/** Adota os preços finais da fatura para o período do estudo, sem substituir tarifas cadastradas. */
+export async function initializeDefaultTariff() {
+  return withLock(() => {
+    const data = readData();
+    if (data.defaultTariffApplied) return data;
+    // A fatura não informa vigência no recorte; esta aplicação é restrita à semana escolhida pelo usuário.
+    if (!data.tariffs.some(t => t.startDate <= '2026-09-14' && t.endDate >= '2026-09-08')) {
+      data.tariffs.push({ id:'20260908-0000-4000-9000-000000000001', startDate:'2026-09-08', endDate:'2026-09-14', config: {
+        te:0.34788326, tusd:0.83724220, pis:1.22, cofins:5.62, icms:20.50,
+        flag:'Amarela', flagValue:6.02 / 237, flagUnit:'BRL_KWH', others:[], taxModel:'included-v1',
+      }});
+    }
+    // A marca preserva uma exclusão posterior e impede recriar a tarifa a cada visita.
+    data.defaultTariffApplied = true;
     return writeData(data);
   });
 }

@@ -1,4 +1,4 @@
-export type TariffConfig = { te: number; tusd: number; pis: number; cofins: number; icms: number; flag: string; flagValue: number; flagUnit: string; others: { name: string; value: number }[]; taxModel: 'outside-v1' };
+export type TariffConfig = { te: number; tusd: number; pis: number; cofins: number; icms: number; flag: string; flagValue: number; flagUnit: string; others: { name: string; value: number }[]; taxModel: 'outside-v1' | 'included-v1' };
 export type TariffInput = { id: string; startDate: string; endDate: string; config: TariffConfig };
 /** Confere números sem aceitar valores ausentes, negativos ou não finitos. */
 function number(value: unknown, max: number): number {
@@ -18,7 +18,7 @@ export function validateTariff(input: unknown): TariffInput {
   const startDate = date(v.startDate), endDate = date(v.endDate);
   if (endDate < startDate) throw new Error('O fim da vigência deve ser igual ou posterior ao início.');
   const c = v.config as Record<string, unknown>;
-  if (!c || c.taxModel !== 'outside-v1') throw new Error('Confirme o modelo de estimativa de tributos por fora.');
+  if (!c || !['outside-v1', 'included-v1'].includes(String(c.taxModel))) throw new Error('Selecione um modelo de tributos válido.');
   if (!['Verde', 'Amarela', 'Vermelha Patamar 1', 'Vermelha Patamar 2'].includes(String(c.flag))) throw new Error('Bandeira inválida.');
   if (!['BRL_KWH', 'BRL_100_KWH'].includes(String(c.flagUnit))) throw new Error('Unidade do adicional inválida.');
   if (!Array.isArray(c.others) || c.others.length > 20) throw new Error('Use até 20 componentes adicionais.');
@@ -26,5 +26,5 @@ export function validateTariff(input: unknown): TariffInput {
     if (!item || typeof item.name !== 'string' || !item.name.trim() || item.name.length > 80) throw new Error('Nome do componente inválido.');
     return { name: item.name.trim(), value: number(item.value, 1000) };
   });
-  return { id: v.id, startDate, endDate, config: { te: number(c.te, 1000), tusd: number(c.tusd, 1000), pis: number(c.pis, 100), cofins: number(c.cofins, 100), icms: number(c.icms, 100), flag: String(c.flag), flagUnit: String(c.flagUnit), flagValue: number(c.flagValue, 10000), others, taxModel: 'outside-v1' } };
+  return { id: v.id, startDate, endDate, config: { te: number(c.te, 1000), tusd: number(c.tusd, 1000), pis: number(c.pis, 100), cofins: number(c.cofins, 100), icms: number(c.icms, 100), flag: String(c.flag), flagUnit: String(c.flagUnit), flagValue: number(c.flagValue, 10000), others, taxModel: c.taxModel as TariffConfig['taxModel'] } };
 }
