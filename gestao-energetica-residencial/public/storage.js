@@ -68,12 +68,18 @@ export async function initializeDefaultReadings() {
 export async function initializeDefaultTariff() {
   return withLock(() => {
     const data = readData();
+    // Corrige apenas o rateio padrão anterior, sem alterar configurações personalizadas.
+    const previous = data.tariffs.find(t => t.id === '20260908-0000-4000-9000-000000000001');
+    if (previous?.config.taxModel === 'included-v1' && previous.config.flagValue === 6.02 / 237) {
+      previous.config.flagValue = 0;
+      return writeData(data);
+    }
     if (data.defaultTariffApplied) return data;
     // A fatura não informa vigência no recorte; esta aplicação é restrita à semana escolhida pelo usuário.
     if (!data.tariffs.some(t => t.startDate <= '2026-09-14' && t.endDate >= '2026-09-08')) {
       data.tariffs.push({ id:'20260908-0000-4000-9000-000000000001', startDate:'2026-09-08', endDate:'2026-09-14', config: {
         te:0.34788326, tusd:0.83724220, pis:1.22, cofins:5.62, icms:20.50,
-        flag:'Amarela', flagValue:6.02 / 237, flagUnit:'BRL_KWH', others:[], taxModel:'included-v1',
+        flag:'Amarela', flagValue:0, flagUnit:'BRL_KWH', others:[], taxModel:'included-v1',
       }});
     }
     // A marca preserva uma exclusão posterior e impede recriar a tarifa a cada visita.
